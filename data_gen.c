@@ -53,11 +53,12 @@ int main()
 {
 
 
-    FILE *fptr;
+    FILE *fptrHR; //human readable
+    FILE *fptrCS; //computer storage
 
 	
-	fptr = fopen("data.txt", "w");
-
+	fptrHR = fopen("data.txt", "w");
+    fptrCS = fopen("data.bin", "wb");
 
     uint16_t counter = 0;
     uint8_t keepGoing = 1;
@@ -72,13 +73,15 @@ int main()
         }
         checksum = checksum_4bitCW_8bDW_snglPrec(counter, counter+1);
 
-        fprintf(fptr, "%hhu %hhu\n", counter, checksum);
-        // fprintf(fptr, "%hhu %hhu %hhu\n", counter, counter+1, checksum);
+        fprintf(fptrHR, "%hhu %hhu\n", counter, checksum);
+        fwrite(&counter, sizeof(uint8_t), 1, fptrCS);
+        fwrite(&checksum, sizeof(uint8_t), 1, fptrCS);
+        // fprintf(fptrHR, "%hhu %hhu %hhu\n", counter, counter+1, checksum);
         
         counter++;
     }
 
-    fclose(fptr);
+    fclose(fptrHR);
     
     return 0;
 
