@@ -1,8 +1,31 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
-int main()
+int main(int argc, char **argv)
 {
+    int configNumber;
+    int corruptionType;
+    int corruptionOption = -1; 
+    
+    // Corruption option is specified.
+    if (argc == 4)
+    {
+        configNumber = atoi(argv[1]);
+        corruptionType = atoi(argv[2]);
+        corruptionOption = atoi(argv[3]);
+    }
+    // Corruption option not specified.
+    else if (argc == 3)
+    {
+        configNumber = atoi(argv[1]);
+        corruptionType = atoi(argv[2]);
+    }
+    else
+    {
+        configNumber = 1;
+        corruptionType = 1;
+    }
 
     printf("Start data corruptor.\n");
     FILE *fptrHR;
