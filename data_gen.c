@@ -35,22 +35,14 @@ int main(int argc, char **argv)
     fptrCS = fopen("data.bin", "wb");
 
     uint16_t counter = 0;
-    uint8_t keepGoing = 1;
     uint8_t checksum;
     uint8_t checksumSize;
 
     // Variables for keeping track of time.
     volatile clock_t start_tick;
     volatile double averageTime = 0.0;
-    while (keepGoing == 1)
+    while (1)
     {
-
-        if (counter >= MAX_DW_VALUE)
-        {
-            keepGoing = 0;
-            break;
-        }
-
         start_tick = clock();
         switch (configNumber)
         {
@@ -113,6 +105,11 @@ int main(int argc, char **argv)
         // fprintf(fptrHR, "%hhu %hhu %hhu\n", counter, counter+1, checksum);
         
         counter++;
+
+         if (counter > MAX_DW_VALUE)
+        {
+            break;
+        }
     }
 
     // Find the average by dividing by number of iterrations.
