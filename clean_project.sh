@@ -7,3 +7,5 @@
  rm data_read.exe
  rm data.txt
  rm data.bin
+ rm data_corrupted.txt
+ rm data_corrupted.bin
