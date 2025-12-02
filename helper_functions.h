@@ -8,9 +8,6 @@
 
 void convert_uint16_t_to_bit_string(uint16_t input, char helper[])
 {
-    //char returnVal[16] = "0000000000000000";
-    //helper = "0000000000000000";
-    // Need to go through 16 bits.
     for (int i = 15; i >= 0; i--)
     {
         if(((0x1<<i)&input) != 0)
@@ -18,10 +15,8 @@ void convert_uint16_t_to_bit_string(uint16_t input, char helper[])
             helper[15-i] = '1';
         }
     }
-
-    //printf("ReturnVal: %s.\n", returnVal);
-    //helper = returnVal;
 }
+
 void adjust_for_12_bits(uint16_t *input)
 {
     uint16_t top = (*input & 0xFF00);
@@ -48,24 +43,20 @@ uint16_t build_burst_error_16bit(int length)
 
 void get_raw_mask_16bit(int wordSize, int corruptionType, int corruptionTypeOption, uint16_t* returnVal)
 {
-    //printf("Getting raw mask.\n");
     switch(corruptionType)
     {
         int position;
         case CORR_SNGL_BIT:
             position = rand() % wordSize;
-            //printf("Option 1 position: %d.\n", position);
             *returnVal = 0x1 << position;
             break;
         case CORR_BURST:
             int possiblePositions = wordSize-corruptionTypeOption+1;
             position = rand() % possiblePositions;
-            //printf("Option 2 position: %d.\n", position);
             *returnVal = build_burst_error_16bit(corruptionTypeOption);
             *returnVal = *returnVal << position;
             break;
         case CORR_RAND:
-            // Go through every possible position and decide whether it will be one or zero randomly;
             *returnVal = 0;
             int decider;
             for (int i = 0; i < wordSize; i++)
@@ -84,25 +75,18 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
 {
     uint16_t returnVal = 0;
     int wordSize;
-    //printf("Calculating mask.\n");
-    //printf("Start returnVal: %d.\n", returnVal);
     switch(configNumber)
     {
         // These all follow the format of 8 bit data then 4 bit code. However, both data and code use 8 bit numbers.
         case BIT8_SNGL_PRES_CHECKSUM:
         case BIT8_SNGL_PRES_RES_CHECKSUM:
         case BIT8_CRC:
-            //printf("First option.\n");
             wordSize = 12;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
-            //printf("From mask calculation:\n");
-            //printf("Mask: %d.\n", returnVal);
             adjust_for_12_bits(&returnVal);
-            //printf("Adjusted mask: %d.\n", returnVal);
             break;
         case BIT8_DBL_PRES_CHECKSUM:
         case BIT8_HONEYWELL_CHECKSUM:
-            //printf("Second option.\n");
             wordSize = 16;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
@@ -115,16 +99,10 @@ void apply_16_bit_mask(const uint16_t mask, uint8_t dwCW[])
 {
     uint8_t topMask = (uint8_t)((mask>>8)&0xFF);
     uint8_t bottomMask = (uint8_t)(mask&0xFF);
-    
-    //printf("Intput mask: %d.\n", mask);
-    //printf("Input dwCW[0]: %d.\n", dwCW[0]);
-    //printf("input dwCW[1]: %d.\n", dwCW[1]);
 
     // Apply the mask.
     dwCW[0] = dwCW[0] ^ topMask;
     dwCW[1] = dwCW[1] ^ bottomMask;
-    //printf("Adjusted dwCW[0]: %d.\n", dwCW[0]);
-    //printf("Adjusted dwCW[1]: %d.\n", dwCW[1]);
 }
 
 void get_buffer_after_space(const char in_buffer[], char out_buffer[], const int size)
