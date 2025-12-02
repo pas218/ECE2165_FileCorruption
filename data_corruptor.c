@@ -32,8 +32,8 @@ int main(int argc, char **argv)
     }
     else
     {
-        configNumber = 1;
-        corruptionType = 1;
+        configNumber = BIT8_SNGL_PRES_CHECKSUM;
+        corruptionType = CORR_SNGL_BIT;
     }
     //printf("ConfigNumber: %d.\n", configNumber);
     //printf("CorruptionType: %d.\n", corruptionType);
