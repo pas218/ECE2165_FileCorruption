@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        configNumber = 1;
+        configNumber = BIT8_SNGL_PRES_CHECKSUM;
     }
 
     FILE *fptrHR; // Human readable.

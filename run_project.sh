@@ -15,4 +15,4 @@ chmod +x ./clean_project.sh
 # $1 represents the config number.
  ./data_gen.exe $1
  ./data_corruptor.exe $1 $2 $3
- #./data_read.exe $1
+ ./data_read.exe $1
