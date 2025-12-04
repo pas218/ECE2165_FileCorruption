@@ -2,10 +2,10 @@
 
  echo "Cleaning project."
  
- rm data_gen.exe
- rm data_corruptor.exe
- rm data_read.exe
- rm data.txt
- rm data.bin
- rm data_corrupted.txt
- rm data_corrupted.bin
+ rm -f data_gen.exe
+ rm -f data_corruptor.exe
+ rm -f data_read.exe
+ rm -f data.txt
+ rm -f data.bin
+ rm -f data_corrupted.txt
+ rm -f data_corrupted.bin
