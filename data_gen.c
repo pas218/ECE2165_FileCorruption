@@ -2,11 +2,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include <time.h>
 #include <unistd.h> 
 #include "checksum.h"
 #include "crc.h"
 #include "types.h"
+#include "helper_functions.h"
 
 #define BITS_PER_BYTE  8
 #define BYTES_PER_CHAR 1
@@ -40,12 +42,13 @@ int main(int argc, char **argv)
     uint8_t checksumSize;
     uint16_t CRC;
 
+    // float get_elapsed_ms(struct timespec start, struct timespec end) {
     // Variables for keeping track of time.
-    volatile clock_t start_tick;
-    volatile double averageTime = 0.0;
+    struct timeval tval_before, tval_after;
+    float timeAverage = 0.0;
     while (1)
     {
-        start_tick = clock();
+        gettimeofday(&tval_before, NULL);
         switch (configNumber)
         {
 
@@ -75,10 +78,15 @@ int main(int argc, char **argv)
             default:
                 break;
         }
+        
+        //printf("0x%x: 0x%x.\n", counter, CRC);
+        
         // Add to the running average.
-        printf("0x%x: 0x%x.\n", counter, CRC);
-        // printf("Time to compute code iteration %d: %f.\n", counter, (((double) (clock() - start_tick)) / CLOCKS_PER_SEC));
-        averageTime += (((double) (clock() - start_tick)) / CLOCKS_PER_SEC);
+        gettimeofday(&tval_after, NULL);
+        float getDiff = timediff_us(tval_before, tval_after);
+        // printf("Microseconds iteration %d: %f.\n", counter, getDiff);
+        // Calculate the elapsed time microseconds.
+        timeAverage += getDiff;
 
         switch (configNumber)
         {
@@ -123,9 +131,9 @@ int main(int argc, char **argv)
     }
 
     // Find the average by dividing by number of iterrations.
-    averageTime /= MAX_DW_VALUE+1;
+    timeAverage /= (float)(MAX_DW_VALUE+1);
 
-    printf("The average time to compute the codeword is: %f.\n", averageTime);
+    printf("The average time to compute the codeword is: %f microseconds.\n", timeAverage);
 
     fclose(fptrHR);
     

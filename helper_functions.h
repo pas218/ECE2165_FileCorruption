@@ -140,4 +140,8 @@ void get_buffer_after_space(const char in_buffer[], char out_buffer[], const int
     }
 }
 
+float timediff_us(struct timeval start, struct timeval end)
+{
+    return (float)(end.tv_sec - start.tv_sec) * 1000000.0 + (float)(end.tv_usec - start.tv_usec);
+}
 #endif
