@@ -38,6 +38,7 @@ int main(int argc, char **argv)
     uint16_t counter = 0;
     uint8_t checksum;
     uint8_t checksumSize;
+    uint16_t CRC;
 
     // Variables for keeping track of time.
     volatile clock_t start_tick;
@@ -68,10 +69,14 @@ int main(int argc, char **argv)
                     checksum = HWChecksum_4bitCW_8bDW (counter-1, counter);
                 }
                 break;
+            case BIT8_CRC:
+                CRC = CRC4_12bCW_8bDW(counter, 0x17); // defaulted generator polynomial
+                break;
             default:
                 break;
         }
         // Add to the running average.
+        printf("0x%x: 0x%x.\n", counter, CRC);
         // printf("Time to compute code iteration %d: %f.\n", counter, (((double) (clock() - start_tick)) / CLOCKS_PER_SEC));
         averageTime += (((double) (clock() - start_tick)) / CLOCKS_PER_SEC);
 
@@ -98,6 +103,10 @@ int main(int argc, char **argv)
                     fwrite(&counter, sizeof(uint8_t), 1, fptrCS);
                 }
                 break;
+            case BIT8_CRC:
+                fprintf(fptrHR, "%hhu\n", CRC);
+                fwrite(&CRC, sizeof(uint16_t), 1, fptrCS);
+                break;
             default:
                 break;
 
@@ -107,7 +116,7 @@ int main(int argc, char **argv)
         
         counter++;
 
-         if (counter > MAX_DW_VALUE)
+        if (counter > MAX_DW_VALUE)
         {
             break;
         }

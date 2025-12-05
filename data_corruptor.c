@@ -66,33 +66,51 @@ int main(int argc, char **argv)
     int counter = 0;
     uint16_t mask;
     uint8_t dwCW[2];
+    uint16_t CW;
 
     // Corrupt the human readable and binary file.
     while (fgets(line, sizeof(line), fptrHR) != NULL)
     {
-        // Get the values as ints.
-        get_buffer_after_space(line, line_after_space, BUFF_SIZE);
-        dwCW[0] = (uint8_t)atoi(line);
-        dwCW[1] = (uint8_t)atoi(line_after_space);
-
-        // Get and print the corrupted values.
         mask = calculate_16bit_mask(configNumber, corruptionType, corruptionTypeOption);
         //printf("Mask: %d.\n", mask);
-        apply_16_bit_mask(mask, dwCW);
 
-        fprintf(fptrCorrHR, "%hhu %hhu\n", dwCW[0], dwCW[1]);
-
-
-        // Also do the same for the binary file.
-        if (fread(dwCW, sizeof(uint8_t), 2, fptrCS) == 2)
+        switch(configNumber)
         {
-            //printf("%hhu %hhu\n", dwCW[0], dwCW[1]);
-            apply_16_bit_mask(mask, dwCW);
-            fwrite(&dwCW[0], sizeof(uint8_t), 1, fptrCorrCS);
-            fwrite(&dwCW[1], sizeof(uint8_t), 1, fptrCorrCS);
+            case BIT8_SNGL_PRES_CHECKSUM:
+            case BIT8_DBL_PRES_CHECKSUM:
+            case BIT8_SNGL_PRES_RES_CHECKSUM:
+            case BIT8_HONEYWELL_CHECKSUM:
+                // Get the values as ints.
+                get_buffer_after_space(line, line_after_space, BUFF_SIZE);
+                dwCW[0] = (uint8_t)atoi(line);
+                dwCW[1] = (uint8_t)atoi(line_after_space);
+                apply_16_bit_mask(mask, dwCW);
+                // Get and print the corrupted values.
+                fprintf(fptrCorrHR, "%hhu %hhu\n", dwCW[0], dwCW[1]);
+                
+                
+                // Also do the same for the binary file.
+                if (fread(dwCW, sizeof(uint8_t), 2, fptrCS) == 2)
+                {
+                    //printf("%hhu %hhu\n", dwCW[0], dwCW[1]);
+                    apply_16_bit_mask(mask, dwCW);
+                    fwrite(&dwCW[0], sizeof(uint8_t), 1, fptrCorrCS);
+                    fwrite(&dwCW[1], sizeof(uint8_t), 1, fptrCorrCS);
+        
+                }
+                break;
+            case BIT8_CRC:
+                CW = (uint16_t)atoi(line);
+                CW ^= mask;
+                fprintf(fptrCorrHR, "%hhu\n", CW);
 
+                if(fread(&CW, sizeof(uint16_t), 1, fptrCS) == 1)
+                {
+                    CW ^= mask;
+                    fwrite(&CW, sizeof(uint16_t), 1, fptrCorrCS);
+                }
+                break;
         }
-
         
         counter++;
     }
