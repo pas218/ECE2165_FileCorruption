@@ -7,9 +7,9 @@ chmod +x ./clean_project.sh
 ./clean_project.sh
 
 # Compile project.
- gcc data_gen.c -o data_gen.exe
- gcc data_corruptor.c -o data_corruptor.exe
- gcc data_read.c -o data_read.exe
+ gcc data_gen.c -O3 -o data_gen.exe
+ gcc data_corruptor.c -O3 -o data_corruptor.exe
+ gcc data_read.c -O3 -o data_read.exe
 
 # Run all programs.
 # $1 represents the config number.

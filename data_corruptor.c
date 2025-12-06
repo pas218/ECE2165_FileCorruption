@@ -11,6 +11,8 @@ int main(int argc, char **argv)
     int corruptionType;
     int corruptionTypeOption = -1; 
     
+    //printf("Number of args: %d.\n", argc);
+
     // Corruption option is specified.
     if (argc >= 4)
     {
@@ -25,7 +27,7 @@ int main(int argc, char **argv)
         corruptionType = atoi(argv[2]);
         
         // Set default length for burst errors.
-        if (corruptionType == CORR_BURST)
+        if ((corruptionType == CORR_BURST) || (corruptionType == CORR_RAND))
         {
             corruptionTypeOption = 3;
         }

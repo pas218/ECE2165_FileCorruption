@@ -61,15 +61,45 @@ void get_raw_mask_16bit(int wordSize, int corruptionType, int corruptionTypeOpti
             *returnVal = *returnVal << position;
             break;
         case CORR_RAND:
-            *returnVal = 0;
-            int decider;
-            for (int i = 0; i < wordSize; i++)
+            // Initialize vector;
+            int8_t positions[16] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+            for (int i = 0; i < 16; i++)
             {
-                decider = rand() % 2;
-                if (decider == 1)
+                positions[i] = -1;
+            }
+
+            uint8_t counter = 0;
+            while(1)
+            {
+                int position = rand() % wordSize;
+                // 16 possible positions.
+                for (int i = 0; i < 16; i++)
                 {
-                    *returnVal = *returnVal | (0x1 << i);
+                    // The position is already accounted for.
+                    if (positions[i] == position)
+                    {
+                        break;
+                    }
+                    else if (positions[i] == -1)
+                    {
+                        positions[i] = position;
+                        counter++;
+                        break;
+                    }
                 }
+
+                // Break if we have reached our number of flips.
+                if (counter >= corruptionTypeOption)
+                {
+                    break;
+                }
+            }
+
+            // Build the mask.
+            *returnVal = 0;
+            for (int i = 0; i < counter; i++)
+            {
+                *returnVal = *returnVal | (0x1 << positions[i]);
             }
             break;
     }
@@ -96,6 +126,7 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
             break;
         default:
     }
+    //printf("Mask inside: %d.\n", returnVal);
     return returnVal;
 }
 

@@ -84,7 +84,6 @@ int main(int argc, char **argv)
         // Add to the running average.
         gettimeofday(&tval_after, NULL);
         float getDiff = timediff_us(tval_before, tval_after);
-        // printf("Microseconds iteration %d: %f.\n", counter, getDiff);
         // Calculate the elapsed time microseconds.
         timeAverage += getDiff;
 
@@ -133,7 +132,7 @@ int main(int argc, char **argv)
     // Find the average by dividing by number of iterrations.
     timeAverage /= (float)(MAX_DW_VALUE+1);
 
-    printf("The average time to compute the codeword is: %f microseconds.\n", timeAverage);
+    printf("The average time to encode the codeword is: %f microseconds.\n", timeAverage);
 
     fclose(fptrHR);
     

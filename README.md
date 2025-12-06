@@ -15,7 +15,7 @@
 |:-----------------:|:---------------:|:------------------------------------------------------------------------:|
 | 0                 | Single bit flip |                                                                          |
 | 1                 | Burst bit flips | Specify length of burst through corruptionTypeOption (default = 3)       |
-| 2                 | Random flips    | The number and position of flips is completely random                    |
+| 2                 | Random flips    | Specify the number of flips through corruptionTypeOption (default = 3)   |
 
 ## How to run
 
