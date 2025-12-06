@@ -109,7 +109,7 @@ int main(int argc, char **argv)
             case BIT8_DBL_PRES_CHECKSUM:
             case BIT8_SNGL_PRES_RES_CHECKSUM:
             case BIT8_HONEYWELL_CHECKSUM:
-                if (checksum != dwCW[0])
+                if (checksum != dwCW[1])
                 {
                     numErrorDetected++;
                 }

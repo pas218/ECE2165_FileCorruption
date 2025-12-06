@@ -7,3 +7,4 @@
 #define CORR_SNGL_BIT 0
 #define CORR_BURST 1
 #define CORR_RAND 2
+#define CORR_NONE 3

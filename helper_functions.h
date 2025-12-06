@@ -102,6 +102,9 @@ void get_raw_mask_16bit(int wordSize, int corruptionType, int corruptionTypeOpti
                 *returnVal = *returnVal | (0x1 << positions[i]);
             }
             break;
+        case CORR_NONE:
+            *returnVal = 0;
+            break;
     }
 }
 

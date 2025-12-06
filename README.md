@@ -16,6 +16,7 @@
 | 0                 | Single bit flip |                                                                          |
 | 1                 | Burst bit flips | Specify length of burst through corruptionTypeOption (default = 3)       |
 | 2                 | Random flips    | Specify the number of flips through corruptionTypeOption (default = 3)   |
+| 4                 | No corruption   | Use as a baseline test (should get 0% detection)                         |
 
 ## How to run
 
