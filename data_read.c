@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include "types.h"
@@ -9,7 +10,7 @@ int main(int argc, char **argv)
 {
 
     int configNumber;
-    if (argc == 2)
+    if (argc >= 2)
     {
         configNumber = atoi(argv[1]);
     }
@@ -23,44 +24,79 @@ int main(int argc, char **argv)
     FILE *fptrCorrCS;
     fptrCorrCS = fopen("data_corrupted.bin", "rb");
 
+    uint8_t (*checksumFuncPtrArr[4])(uint8_t, uint8_t) = 
+    {
+        checksum_4bitCW_8bDW_snglPrec,
+        checksum_4bitCW_8bDW_doubPrec,
+        residueChecksum_4bitCW_8bDW_snglPrec,
+        HWChecksum_4bitCW_8bDW
+    };
+
     // Read through the corrupted file.
     uint8_t dwCW[2];
     uint8_t checksumSize;
     uint8_t checksum;
+    uint16_t crc;
+    uint16_t crcSyndrome;
+    bool breakCond = false;
     int numErrorDetected = 0;
     int numErrorCorrected = 0;
     int totalValues = 0;
-    while (fread(dwCW, sizeof(uint8_t), 2, fptrCorrCS) == 2)
+    while (1)
     {
         switch (configNumber)
         {
             // See README for configuration details.
             case BIT8_SNGL_PRES_CHECKSUM:
-                checksumSize = 4;
-                checksum = checksum_4bitCW_8bDW_snglPrec(dwCW[0], checksumSize);
-                break;
             case BIT8_DBL_PRES_CHECKSUM:
-                checksumSize = 4;
-                checksum = checksum_4bitCW_8bDW_doubPrec(dwCW[0], checksumSize);
-                break;
             case BIT8_SNGL_PRES_RES_CHECKSUM:
-                checksumSize = 4;
-                checksum = residueChecksum_4bitCW_8bDW_snglPrec(dwCW[0], checksumSize);
+                if(fread(dwCW, sizeof(uint8_t), 2, fptrCorrCS) == 2)
+                {
+                    checksumSize = 4;
+                    checksum = checksumFuncPtrArr[configNumber](dwCW[0], checksumSize);
+                }
+                else breakCond = true;
                 break;
             case BIT8_HONEYWELL_CHECKSUM:
                 // Make a checksum for every two datawords.
-                if (dwCW[0] % 2 == 1)
+                if(fread(dwCW, sizeof(uint8_t), 2, fptrCorrCS) == 2)
                 {
-                    checksum = HWChecksum_4bitCW_8bDW (dwCW[0]-1, dwCW[0]);
+                    if (dwCW[0] % 2 == 1)
+                    {
+                        checksum = checksumFuncPtrArr[configNumber](dwCW[0]-1, dwCW[0]);
+                    }
                 }
+                else breakCond = true;
                 break;
+            case BIT8_CRC:
+                if(fread(&crc, sizeof(uint16_t), 1, fptrCorrCS) == 1)
+                {
+                    crcSyndrome = CRC4_12bCW_8bDW(crc, 12, 0x17);
+                    // printf("%d\n", crcSyndrome);
+                }
+                else breakCond = true;
             default:
                 break;
         }
 
-        if (checksum != dwCW[0])
+        if(breakCond) break;
+
+        switch (configNumber)
         {
-            numErrorDetected++;
+            // See README for configuration details.
+            case BIT8_SNGL_PRES_CHECKSUM:
+            case BIT8_DBL_PRES_CHECKSUM:
+            case BIT8_SNGL_PRES_RES_CHECKSUM:
+            case BIT8_HONEYWELL_CHECKSUM:
+                if (checksum != dwCW[0])
+                {
+                    numErrorDetected++;
+                }
+                break;
+            case BIT8_CRC: 
+                if(crcSyndrome) numErrorDetected++;
+            default:
+                break;
         }
 
         totalValues++;

@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 {
 
     int configNumber;
-    if (argc == 2)
+    if (argc >= 2)
     {
         configNumber = atoi(argv[1]);
     }
@@ -73,13 +73,13 @@ int main(int argc, char **argv)
                 }
                 break;
             case BIT8_CRC:
-                CRC = CRC4_12bCW_8bDW(counter, 0x17); // defaulted generator polynomial
+                CRC = CRC4_12bCW_8bDW(counter, 8, 0x17); // defaulted generator polynomial
+                // printf("0x%x: 0x%x.\n", counter, CRC);
                 break;
             default:
                 break;
         }
         
-        //printf("0x%x: 0x%x.\n", counter, CRC);
         
         // Add to the running average.
         gettimeofday(&tval_after, NULL);

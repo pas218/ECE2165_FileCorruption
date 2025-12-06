@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     int corruptionTypeOption = -1; 
     
     // Corruption option is specified.
-    if (argc == 4)
+    if (argc >= 4)
     {
         configNumber = atoi(argv[1]);
         corruptionType = atoi(argv[2]);
@@ -29,6 +29,11 @@ int main(int argc, char **argv)
         {
             corruptionTypeOption = 3;
         }
+    }
+    else if (argc == 2)
+    {
+        configNumber = atoi(argv[1]);
+        corruptionType = CORR_SNGL_BIT;
     }
     else
     {

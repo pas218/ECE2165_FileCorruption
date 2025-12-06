@@ -22,7 +22,8 @@ void adjust_for_12_bits(uint16_t *input)
     uint16_t top = (*input & 0xFF00);
     uint16_t bottom = (*input & 0x00FF);
     uint16_t intermediate;
-    top = top << 4;
+    top <<= 4;
+    top >>= 4;
     intermediate = (bottom & 0x00F0) << 4;
     bottom = bottom & 0x000F;
     top = top | intermediate;
