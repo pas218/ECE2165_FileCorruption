@@ -118,6 +118,7 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
         case BIT8_SNGL_PRES_CHECKSUM:
         case BIT8_SNGL_PRES_RES_CHECKSUM:
         case BIT8_CRC:
+        case BIT8_HC:
             wordSize = 12;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             adjust_for_12_bits(&returnVal);
@@ -178,5 +179,19 @@ void get_buffer_after_space(const char in_buffer[], char out_buffer[], const int
 float timediff_us(struct timeval start, struct timeval end)
 {
     return (float)(end.tv_sec - start.tv_sec) * 1000000.0 + (float)(end.tv_usec - start.tv_usec);
+}
+
+uint8_t get_parity(uint32_t data, uint32_t size)
+{
+    uint8_t sumOnes = 0;
+    // printf("data: %x -- ", data);
+    for(int i = 0; i < size; i++)
+    {
+        sumOnes += (data>>i & 0x1);
+    }
+
+    // printf("numOnes: %d\n", sumOnes);
+
+    return sumOnes & 0x1;
 }
 #endif

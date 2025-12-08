@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     while (fgets(line, sizeof(line), fptrHR) != NULL)
     {
         mask = calculate_16bit_mask(configNumber, corruptionType, corruptionTypeOption);
-        //printf("Mask: %d.\n", mask);
+        // printf("Mask: %d.\n", mask);
 
         switch(configNumber)
         {
@@ -107,15 +107,16 @@ int main(int argc, char **argv)
                 }
                 break;
             case BIT8_CRC:
+            case BIT8_HC:
                 CW = (uint16_t)atoi(line);
                 CW ^= mask;
-                fprintf(fptrCorrHR, "%hhu\n", CW);
+                fprintf(fptrCorrHR, "%hu\n", CW);
+                fwrite(&CW, sizeof(uint16_t), 1, fptrCorrCS);
 
-                if(fread(&CW, sizeof(uint16_t), 1, fptrCS) == 1)
-                {
-                    CW ^= mask;
-                    fwrite(&CW, sizeof(uint16_t), 1, fptrCorrCS);
-                }
+                // if(fread(&CW, sizeof(uint16_t), 1, fptrCS) == 1)
+                // {
+                //     CW ^= mask;
+                // }
                 break;
         }
         

@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <stdint.h>
-#include "types.h"
 #include "checksum.h"
 #include "crc.h"
+#include "hammcode.h"
 #include "helper_functions.h"
+#include "types.h"
 
 int main(int argc, char **argv)
 {
@@ -37,8 +38,10 @@ int main(int argc, char **argv)
     uint8_t dwCW[2];
     uint8_t checksumSize;
     uint8_t checksum;
-    uint16_t crc;
+    uint16_t crc = 0;
     uint16_t crcSyndrome;
+    uint16_t HC = 0;
+    bool HCSyndrome;
     bool breakCond = false;
     int numErrorDetected = 0;
     int numErrorCorrected = 0;
@@ -47,6 +50,7 @@ int main(int argc, char **argv)
     float timeAverage = 0.0;
     while (1)
     {
+        gettimeofday(&tval_before, NULL);
         switch (configNumber)
         {
             // See README for configuration details.
@@ -55,14 +59,8 @@ int main(int argc, char **argv)
             case BIT8_SNGL_PRES_RES_CHECKSUM:
                 if(fread(dwCW, sizeof(uint8_t), 2, fptrCorrCS) == 2)
                 {
-                    gettimeofday(&tval_before, NULL);
                     checksumSize = 4;
                     checksum = checksumFuncPtrArr[configNumber](dwCW[0], checksumSize);
-                    // Add to the running average.
-                    gettimeofday(&tval_after, NULL);
-                    float getDiff = timediff_us(tval_before, tval_after);
-                    // Calculate the elapsed time microseconds.
-                    timeAverage += getDiff;
                 }
                 else breakCond = true;
                 break;
@@ -72,13 +70,7 @@ int main(int argc, char **argv)
                 {
                     if (dwCW[0] % 2 == 1)
                     {
-                        gettimeofday(&tval_before, NULL);
                         checksum = checksumFuncPtrArr[configNumber](dwCW[0]-1, dwCW[0]);
-                        // Add to the running average.
-                        gettimeofday(&tval_after, NULL);
-                        float getDiff = timediff_us(tval_before, tval_after);
-                        // Calculate the elapsed time microseconds.
-                        timeAverage += getDiff;
                     }
                 }
                 else breakCond = true;
@@ -86,21 +78,31 @@ int main(int argc, char **argv)
             case BIT8_CRC:
                 if(fread(&crc, sizeof(uint16_t), 1, fptrCorrCS) == 1)
                 {
-                    gettimeofday(&tval_before, NULL);
-                    crcSyndrome = CRC4_12bCW_8bDW(crc, 12, 0x17);
+                    crcSyndrome = CRC4(crc, 12, 0x17);
                     // printf("%d\n", crcSyndrome);
-                    // Add to the running average.
-                    gettimeofday(&tval_after, NULL);
-                    float getDiff = timediff_us(tval_before, tval_after);
-                    // Calculate the elapsed time microseconds.
-                    timeAverage += getDiff;
                 }
                 else breakCond = true;
+            case BIT8_HC:
+                if(fread(&HC, sizeof(uint16_t), 1, fptrCorrCS) == 1)
+                {
+                    HCSyndrome = HC_12bCW_8bDW_syndrome_SEC(&HC);
+                }
+                else breakCond = true;
+                break;
             default:
+                breakCond = true;
                 break;
         }
 
-        if(breakCond) break;
+        gettimeofday(&tval_after, NULL);
+        float getDiff = timediff_us(tval_before, tval_after);
+        timeAverage += getDiff;
+
+        if(breakCond)
+        {
+            // printf("Breaking out of read loop now\n");
+            break;
+        }
 
         switch (configNumber)
         {
@@ -114,8 +116,17 @@ int main(int argc, char **argv)
                     numErrorDetected++;
                 }
                 break;
-            case BIT8_CRC: 
+            case BIT8_CRC:
                 if(crcSyndrome) numErrorDetected++;
+                else printf("crc codeword not fail: %d\n", crc);
+                break;
+            case BIT8_HC:
+                if(HCSyndrome)
+                {
+                    numErrorDetected++;
+                    numErrorCorrected++;
+                }
+                break;
             default:
                 break;
         }

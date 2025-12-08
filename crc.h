@@ -3,7 +3,7 @@
 
 // #include <stdio.h>
 
-uint16_t CRC4_12bCW_8bDW (uint8_t dataword, uint16_t dwSize, uint8_t generator_polynomial_5bit)
+uint16_t CRC4 (uint32_t dataword, uint16_t dwSize, uint8_t generator_polynomial_5bit)
 {
     if(generator_polynomial_5bit == 0x0) generator_polynomial_5bit = 0x17;
 

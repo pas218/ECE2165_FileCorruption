@@ -7,8 +7,9 @@
 #include <unistd.h> 
 #include "checksum.h"
 #include "crc.h"
-#include "types.h"
+#include "hammcode.h"
 #include "helper_functions.h"
+#include "types.h"
 
 #define BITS_PER_BYTE  8
 #define BYTES_PER_CHAR 1
@@ -41,6 +42,7 @@ int main(int argc, char **argv)
     uint8_t checksum;
     uint8_t checksumSize;
     uint16_t CRC;
+    uint16_t HCcodeword;
 
     // float get_elapsed_ms(struct timespec start, struct timespec end) {
     // Variables for keeping track of time.
@@ -73,9 +75,12 @@ int main(int argc, char **argv)
                 }
                 break;
             case BIT8_CRC:
-                CRC = CRC4_12bCW_8bDW(counter, 8, 0x17); // defaulted generator polynomial
+                CRC = CRC4 (counter, 8, 0x17); // defaulted generator polynomial
                 // printf("0x%x: 0x%x.\n", counter, CRC);
                 break;
+                case BIT8_HC:
+                HCcodeword = HC_12bCW_8bDW(counter);
+                // printf("0x%x: 0x%x.\n", counter, HCcodeword);
             default:
                 break;
         }
@@ -111,9 +116,12 @@ int main(int argc, char **argv)
                 }
                 break;
             case BIT8_CRC:
-                fprintf(fptrHR, "%hhu\n", CRC);
+                fprintf(fptrHR, "%hu\n", CRC);
                 fwrite(&CRC, sizeof(uint16_t), 1, fptrCS);
                 break;
+            case BIT8_HC:
+                fprintf(fptrHR, "%hu\n", HCcodeword);
+                fwrite(&HCcodeword, sizeof(uint16_t), 1, fptrCS);
             default:
                 break;
 
