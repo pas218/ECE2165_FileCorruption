@@ -41,7 +41,8 @@ int main(int argc, char **argv)
     uint16_t crc = 0;
     uint16_t crcSyndrome;
     uint16_t HC = 0;
-    bool HCSyndrome;
+    uint8_t HCSyndrome;
+    uint8_t HCSECDED = 0;
     bool breakCond = false;
     int numErrorDetected = 0;
     int numErrorCorrected = 0;
@@ -64,6 +65,7 @@ int main(int argc, char **argv)
                 }
                 else breakCond = true;
                 break;
+
             case BIT8_HONEYWELL_CHECKSUM:
                 // Make a checksum for every two datawords.
                 if(fread(dwCW, sizeof(uint8_t), 2, fptrCorrCS) == 2)
@@ -75,6 +77,7 @@ int main(int argc, char **argv)
                 }
                 else breakCond = true;
                 break;
+
             case BIT8_CRC:
                 if(fread(&crc, sizeof(uint16_t), 1, fptrCorrCS) == 1)
                 {
@@ -82,13 +85,24 @@ int main(int argc, char **argv)
                     // printf("%d\n", crcSyndrome);
                 }
                 else breakCond = true;
-            case BIT8_HC:
+                break;
+
+            case BIT8_HC_SEC:
                 if(fread(&HC, sizeof(uint16_t), 1, fptrCorrCS) == 1)
                 {
                     HCSyndrome = HC_12bCW_8bDW_syndrome_SEC(&HC);
                 }
                 else breakCond = true;
                 break;
+
+            case BIT8_HC_SECDED:
+                if(fread(&HC, sizeof(uint16_t), 1, fptrCorrCS) == 1)
+                {
+                    HCSECDED = HC_13bCW_8bDW_syndrome_SECDED(&HC, &HCSyndrome);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -120,13 +134,26 @@ int main(int argc, char **argv)
                 if(crcSyndrome) numErrorDetected++;
                 else printf("crc codeword not fail: %d\n", crc);
                 break;
-            case BIT8_HC:
+            case BIT8_HC_SEC:
                 if(HCSyndrome)
                 {
                     numErrorDetected++;
                     numErrorCorrected++;
                 }
                 break;
+            case BIT8_HC_SECDED:
+                if(HCSECDED || HCSyndrome)
+                {
+                    if(HCSECDED)
+                    {
+                        numErrorCorrected++;
+                        numErrorDetected++;
+                    }
+                    else
+                    {
+                        numErrorDetected++;
+                    }
+                }
             default:
                 break;
         }

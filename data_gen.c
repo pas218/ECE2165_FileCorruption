@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     uint8_t checksum;
     uint8_t checksumSize;
     uint16_t CRC;
-    uint16_t HCcodeword;
+    uint16_t HCcodeword = 0;
 
     // float get_elapsed_ms(struct timespec start, struct timespec end) {
     // Variables for keeping track of time.
@@ -78,9 +78,13 @@ int main(int argc, char **argv)
                 CRC = CRC4 (counter, 8, 0x17); // defaulted generator polynomial
                 // printf("0x%x: 0x%x.\n", counter, CRC);
                 break;
-                case BIT8_HC:
+            case BIT8_HC_SEC:
                 HCcodeword = HC_12bCW_8bDW(counter);
                 // printf("0x%x: 0x%x.\n", counter, HCcodeword);
+                break;
+            case BIT8_HC_SECDED:
+                HCcodeword = HC_13bCW_8bDW(counter);
+                break;
             default:
                 break;
         }
@@ -119,9 +123,12 @@ int main(int argc, char **argv)
                 fprintf(fptrHR, "%hu\n", CRC);
                 fwrite(&CRC, sizeof(uint16_t), 1, fptrCS);
                 break;
-            case BIT8_HC:
+            case BIT8_HC_SEC:
+            case BIT8_HC_SECDED:
+                // printf("%x\n", HCcodeword);
                 fprintf(fptrHR, "%hu\n", HCcodeword);
                 fwrite(&HCcodeword, sizeof(uint16_t), 1, fptrCS);
+                break;
             default:
                 break;
 

@@ -107,7 +107,8 @@ int main(int argc, char **argv)
                 }
                 break;
             case BIT8_CRC:
-            case BIT8_HC:
+            case BIT8_HC_SEC:
+            case BIT8_HC_SECDED:
                 CW = (uint16_t)atoi(line);
                 CW ^= mask;
                 fprintf(fptrCorrHR, "%hu\n", CW);

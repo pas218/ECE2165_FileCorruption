@@ -3,7 +3,8 @@
 #define BIT8_SNGL_PRES_RES_CHECKSUM 2
 #define BIT8_HONEYWELL_CHECKSUM 3
 #define BIT8_CRC 4
-#define BIT8_HC 5
+#define BIT8_HC_SEC 5
+#define BIT8_HC_SECDED 6
 
 #define CORR_SNGL_BIT 0
 #define CORR_BURST 1

@@ -117,11 +117,17 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
         // These all follow the format of 8 bit data then 4 bit code. However, both data and code use 8 bit numbers.
         case BIT8_SNGL_PRES_CHECKSUM:
         case BIT8_SNGL_PRES_RES_CHECKSUM:
-        case BIT8_CRC:
-        case BIT8_HC:
             wordSize = 12;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             adjust_for_12_bits(&returnVal);
+        case BIT8_CRC:
+        case BIT8_HC_SEC:
+            wordSize = 12;
+            get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
+            break;
+        case BIT8_HC_SECDED:
+            wordSize = 13;
+            get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
         case BIT8_DBL_PRES_CHECKSUM:
         case BIT8_HONEYWELL_CHECKSUM:
@@ -129,6 +135,7 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
         default:
+            break;
     }
     //printf("Mask inside: %d.\n", returnVal);
     return returnVal;

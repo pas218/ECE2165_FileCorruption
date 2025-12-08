@@ -9,6 +9,8 @@
 | 2             | 8                   | 4               | SnglePrec Res Checksum | Detect   |
 | 3             | 8                   | 8               | Honeywell Checksum     | Detect   |
 | 4             | 8                   | 4               | CRC                    | Detect   |
+| 5             | 8                   | 4               | SEC Hamming Code       | Correct  |
+| 6             | 8                   | 5               | SECDED Hamming Code    | Correct & Detect |
 
 ## Corruption configurations
 | Corruption Number | Corruption Type | Notes                                                                    |
