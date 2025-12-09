@@ -11,6 +11,7 @@
 | 4             | 8                   | 4               | CRC                    | Detect   |
 | 5             | 8                   | 4               | SEC Hamming Code       | Correct  |
 | 6             | 8                   | 5               | SECDED Hamming Code    | Correct & Detect |
+| 7             | 8                   | 3 (up to 8)     | Low Cost Residue Arithmetic Code | Detect |
 
 ## Corruption configurations
 | Corruption Number | Corruption Type | Notes                                                                    |

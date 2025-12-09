@@ -6,6 +6,7 @@
 #include "crc.h"
 #include "hammcode.h"
 #include "helper_functions.h"
+#include "residuecodes.h"
 #include "types.h"
 
 int main(int argc, char **argv)
@@ -44,6 +45,9 @@ int main(int argc, char **argv)
     uint16_t HC = 0;
     uint8_t HCSyndrome;
     uint8_t HCSECDED = 0;
+    uint16_t ResidArithVals[3];
+    bool residCodeCheck = false;
+
     bool breakCond = false;
     int numErrorDetected = 0;
     int numErrorCorrected = 0;
@@ -101,6 +105,14 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT8_RESID_ARITH:
+                if(fread(&ResidArithVals, sizeof(uint16_t), 3, fptrCorrCS) == 3)
+                {
+                    residCodeCheck = lcresidarith_extract_compare(ResidArithVals[0], ResidArithVals[1], ResidArithVals[2], 3);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -130,7 +142,7 @@ int main(int argc, char **argv)
             case BIT8_HONEYWELL_CHECKSUM:
                 if(checksum != HWChecksumVals[2]) numErrorDetected++;
                 break;
-                
+
             case BIT8_CRC:
                 if(crcSyndrome) numErrorDetected++;
                 else printf("crc codeword not fail: %d\n", crc);
@@ -142,6 +154,7 @@ int main(int argc, char **argv)
                     numErrorCorrected++;
                 }
                 break;
+
             case BIT8_HC_SECDED:
                 if(HCSECDED || HCSyndrome)
                 {
@@ -155,6 +168,12 @@ int main(int argc, char **argv)
                         numErrorDetected++;
                     }
                 }
+                break;
+
+            case BIT8_RESID_ARITH:
+                if(!residCodeCheck) numErrorDetected++;
+                break;
+                
             default:
                 break;
         }

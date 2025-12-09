@@ -74,6 +74,7 @@ int main(int argc, char **argv)
     uint16_t mask;
     uint8_t dwCW[2];
     uint8_t HWChecksumVals[3];
+    uint16_t ResidArithVals[3];
     uint16_t CW;
 
     // Corrupt the human readable and binary file.
@@ -108,7 +109,7 @@ int main(int argc, char **argv)
                 break;
 
             case BIT8_HONEYWELL_CHECKSUM:
-                human_readable_tokenizer(HWChecksumVals, line);
+                human_readable_tokenizer_8b(HWChecksumVals, line);
                 uint8_t errorIdx = rand() % 3;
                 HWChecksumVals[errorIdx] ^= mask;
                 fprintf(fptrCorrHR, "%hhu %hhu %hhu\n", HWChecksumVals[0], HWChecksumVals[1], HWChecksumVals[2]);
@@ -127,6 +128,13 @@ int main(int argc, char **argv)
                 // {
                 //     CW ^= mask;
                 // }
+                break;
+
+            case BIT8_RESID_ARITH:
+                human_readable_tokenizer_16b(ResidArithVals, line);
+                ResidArithVals[2] ^= mask;
+                fprintf(fptrCorrHR, "%hu %hu %hu\n", ResidArithVals[0], ResidArithVals[1], ResidArithVals[2]);
+                fwrite(&ResidArithVals, sizeof(uint16_t), 3, fptrCorrCS);
                 break;
         }
         

@@ -140,9 +140,11 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
             break;
 
         case BIT8_HONEYWELL_CHECKSUM:
+        case BIT8_RESID_ARITH:
             wordSize = 8;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
+
             
         default:
             break;
@@ -161,7 +163,7 @@ void apply_16_bit_mask(const uint16_t mask, uint8_t dwCW[])
     dwCW[1] = dwCW[1] ^ bottomMask;
 }
 
-void human_readable_tokenizer(uint8_t nums[], char line[])
+void human_readable_tokenizer_8b(uint8_t nums[], char line[])
 {
     const char delim[] = " ";
     char* token;
@@ -172,8 +174,19 @@ void human_readable_tokenizer(uint8_t nums[], char line[])
     nums[1] = atoi(token);
     token = strtok(NULL, delim);
     nums[2] = atoi(token);
+}
 
+void human_readable_tokenizer_16b(uint16_t nums[], char line[])
+{
+    const char delim[] = " ";
+    char* token;
 
+    token = strtok(line, delim);
+    nums[0] = atoi(token);
+    token = strtok(NULL, delim);
+    nums[1] = atoi(token);
+    token = strtok(NULL, delim);
+    nums[2] = atoi(token);
 }
 
 void get_buffer_after_space(const char in_buffer[], char out_buffer[], const int size)

@@ -5,10 +5,12 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h> 
+
 #include "checksum.h"
 #include "crc.h"
 #include "hammcode.h"
 #include "helper_functions.h"
+#include "residuecodes.h"
 #include "types.h"
 
 #define BITS_PER_BYTE  8
@@ -43,6 +45,7 @@ int main(int argc, char **argv)
     uint8_t checksumSize;
     uint16_t CRC;
     uint16_t HCcodeword = 0;
+    uint16_t residArith[3];
 
     // float get_elapsed_ms(struct timespec start, struct timespec end) {
     // Variables for keeping track of time.
@@ -87,6 +90,12 @@ int main(int argc, char **argv)
             case BIT8_HC_SECDED:
                 HCcodeword = HC_13bCW_8bDW(counter);
                 break;
+
+            case BIT8_RESID_ARITH:
+                residArith[0] = lowcost_residuearith_8bDW(counter-1, 3);
+                residArith[1] = lowcost_residuearith_8bDW(counter, 3);
+                residArith[2] = (counter + (uint8_t)(counter-1));
+                break;
                 
             default:
                 break;
@@ -128,6 +137,11 @@ int main(int argc, char **argv)
                 // printf("%x\n", HCcodeword);
                 fprintf(fptrHR, "%hu\n", HCcodeword);
                 fwrite(&HCcodeword, sizeof(uint16_t), 1, fptrCS);
+                break;
+
+            case BIT8_RESID_ARITH:
+                fprintf(fptrHR, "%hu %hu %hu\n", residArith[0], residArith[1], residArith[2]);
+                fwrite(&residArith, sizeof(uint16_t), 3, fptrCS);
                 break;
 
             default:
