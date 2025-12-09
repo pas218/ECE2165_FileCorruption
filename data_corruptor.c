@@ -2,8 +2,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "helper_functions.h"
+#include "types.h"
 
-#define BUFF_SIZE 100
 
 int main(int argc, char **argv)
 {

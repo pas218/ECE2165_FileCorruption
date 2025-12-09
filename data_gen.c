@@ -35,10 +35,14 @@ int main(int argc, char **argv)
 
     FILE *fptrHR; // Human readable.
     FILE *fptrCS; // Computer storage.
+    // Files for design statistics.
+    FILE *fptrTiming;
+    
+    
 
-	
 	fptrHR = fopen("data.txt", "w");
     fptrCS = fopen("data.bin", "wb");
+    fptrTiming = fopen("data_timing.txt", "a");
 
     uint16_t counter = 0;
     uint8_t checksum;
@@ -170,9 +174,12 @@ int main(int argc, char **argv)
     timeAverage /= (float)(MAX_DW_VALUE+1);
 
     printf("The average time to encode the codeword is: %f microseconds.\n", timeAverage);
+    // Print the time to encoder to file.
+    fprintf(fptrTiming, "%f\n", timeAverage);
 
     fclose(fptrHR);
-    
+    fclose(fptrCS);
+    fclose(fptrTiming);
     return 0;
 
 }

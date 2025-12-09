@@ -12,3 +12,7 @@
 #define CORR_BURST 1
 #define CORR_RAND 2
 #define CORR_NONE 3
+
+#define DEFAULT_ITERATIONS 100
+
+#define BUFF_SIZE 100

@@ -25,6 +25,14 @@ int main(int argc, char **argv)
     printf("Data read.\n");
 
     FILE *fptrCorrCS;
+    // Get file pointers for statistics.
+    FILE *fptrTiming;
+    FILE *fptrDetected;
+    FILE *fptrCorrected;
+
+    fptrTiming = fopen("data_timing.txt", "a");
+    fptrDetected = fopen("data_detected.txt", "a");
+    fptrCorrected = fopen("data_corrected.txt", "a");
     fptrCorrCS = fopen("data_corrupted.bin", "rb");
 
     uint8_t (*checksumFuncPtrArr[4])(uint8_t, uint8_t) = 
@@ -203,6 +211,15 @@ int main(int argc, char **argv)
     printf("Number of errors detected: %d.\n", numErrorDetected);
     printf("Total corrupted values: %d.\n", totalValues);
     printf("Percent errors detected: %f.\n", (float)numErrorDetected/(float)totalValues);
+    printf("Percent errors corrcted: %f.\n", (float)numErrorCorrected/(float)totalValues);
+    // print to statistics files.
+    fprintf(fptrTiming, "%f\n", timeAverage);
+    fprintf(fptrDetected, "%f\n", (float)numErrorDetected/(float)totalValues);
+    fprintf(fptrCorrected, "%f\n", (float)numErrorCorrected/(float)totalValues);
+
     fclose(fptrCorrCS);
+    fclose(fptrTiming);
+    fclose(fptrDetected);
+    fclose(fptrCorrected);
     printf("End data read.\n");
 }
