@@ -59,32 +59,35 @@ int main(int argc, char **argv)
                 checksumSize = 4;
                 checksum = checksum_4bitCW_8bDW_snglPrec(counter, checksumSize);
                 break;
+
             case BIT8_DBL_PRES_CHECKSUM:
                 checksumSize = 4;
                 checksum = checksum_4bitCW_8bDW_doubPrec(counter, checksumSize);
                 break;
+
             case BIT8_SNGL_PRES_RES_CHECKSUM:
                 checksumSize = 4;
                 checksum = residueChecksum_4bitCW_8bDW_snglPrec(counter, checksumSize);
                 break;
+
             case BIT8_HONEYWELL_CHECKSUM:
-                // Make a checksum for every two datawords.
-                if (counter % 2 == 1)
-                {
-                    checksum = HWChecksum_4bitCW_8bDW (counter-1, counter);
-                }
+                checksum = HWChecksum_4bitCW_8bDW (counter-1, counter);
                 break;
+
             case BIT8_CRC:
                 CRC = CRC4 (counter, 8, 0x17); // defaulted generator polynomial
                 // printf("0x%x: 0x%x.\n", counter, CRC);
                 break;
+
             case BIT8_HC_SEC:
                 HCcodeword = HC_12bCW_8bDW(counter);
                 // printf("0x%x: 0x%x.\n", counter, HCcodeword);
                 break;
+
             case BIT8_HC_SECDED:
                 HCcodeword = HC_13bCW_8bDW(counter);
                 break;
+                
             default:
                 break;
         }
@@ -105,30 +108,28 @@ int main(int argc, char **argv)
                 fwrite(&counter, sizeof(uint8_t), 1, fptrCS);
                 fwrite(&checksum, sizeof(uint8_t), 1, fptrCS);
                 break;
+
             case BIT8_HONEYWELL_CHECKSUM:
                 // Only write the checksum every two datawords.
-                if (counter % 2 == 1)
-                {
-                    fprintf(fptrHR, "%hhu %hhu\n", counter, checksum);
-                    fwrite(&counter, sizeof(uint8_t), 1, fptrCS);
-                    fwrite(&checksum, sizeof(uint8_t), 1, fptrCS);
-                }
-                else
-                {
-                    fprintf(fptrHR, "%hhu\n", counter);
-                    fwrite(&counter, sizeof(uint8_t), 1, fptrCS);
-                }
+                fprintf(fptrHR, "%hhu %hhu %hhu\n", counter-1, counter, checksum);
+                uint8_t prevCnt = counter-1;
+                fwrite(&prevCnt, sizeof(uint8_t), 1, fptrCS);
+                fwrite(&counter, sizeof(uint8_t), 1, fptrCS);
+                fwrite(&checksum, sizeof(uint8_t), 1, fptrCS);
                 break;
+
             case BIT8_CRC:
                 fprintf(fptrHR, "%hu\n", CRC);
                 fwrite(&CRC, sizeof(uint16_t), 1, fptrCS);
                 break;
+
             case BIT8_HC_SEC:
             case BIT8_HC_SECDED:
                 // printf("%x\n", HCcodeword);
                 fprintf(fptrHR, "%hu\n", HCcodeword);
                 fwrite(&HCcodeword, sizeof(uint16_t), 1, fptrCS);
                 break;
+
             default:
                 break;
 

@@ -38,6 +38,7 @@ int main(int argc, char **argv)
     uint8_t dwCW[2];
     uint8_t checksumSize;
     uint8_t checksum;
+    uint8_t HWChecksumVals[3];
     uint16_t crc = 0;
     uint16_t crcSyndrome;
     uint16_t HC = 0;
@@ -68,12 +69,9 @@ int main(int argc, char **argv)
 
             case BIT8_HONEYWELL_CHECKSUM:
                 // Make a checksum for every two datawords.
-                if(fread(dwCW, sizeof(uint8_t), 2, fptrCorrCS) == 2)
+                if(fread(HWChecksumVals, sizeof(uint8_t), 3, fptrCorrCS) == 3)
                 {
-                    if (dwCW[0] % 2 == 1)
-                    {
-                        checksum = checksumFuncPtrArr[configNumber](dwCW[0]-1, dwCW[0]);
-                    }
+                    checksum = checksumFuncPtrArr[configNumber](HWChecksumVals[0], HWChecksumVals[1]);
                 }
                 else breakCond = true;
                 break;
@@ -124,12 +122,15 @@ int main(int argc, char **argv)
             case BIT8_SNGL_PRES_CHECKSUM:
             case BIT8_DBL_PRES_CHECKSUM:
             case BIT8_SNGL_PRES_RES_CHECKSUM:
-            case BIT8_HONEYWELL_CHECKSUM:
                 if (checksum != dwCW[1])
                 {
                     numErrorDetected++;
                 }
                 break;
+            case BIT8_HONEYWELL_CHECKSUM:
+                if(checksum != HWChecksumVals[2]) numErrorDetected++;
+                break;
+                
             case BIT8_CRC:
                 if(crcSyndrome) numErrorDetected++;
                 else printf("crc codeword not fail: %d\n", crc);

@@ -73,6 +73,7 @@ int main(int argc, char **argv)
     int counter = 0;
     uint16_t mask;
     uint8_t dwCW[2];
+    uint8_t HWChecksumVals[3];
     uint16_t CW;
 
     // Corrupt the human readable and binary file.
@@ -86,7 +87,6 @@ int main(int argc, char **argv)
             case BIT8_SNGL_PRES_CHECKSUM:
             case BIT8_DBL_PRES_CHECKSUM:
             case BIT8_SNGL_PRES_RES_CHECKSUM:
-            case BIT8_HONEYWELL_CHECKSUM:
                 // Get the values as ints.
                 get_buffer_after_space(line, line_after_space, BUFF_SIZE);
                 dwCW[0] = (uint8_t)atoi(line);
@@ -106,6 +106,15 @@ int main(int argc, char **argv)
         
                 }
                 break;
+
+            case BIT8_HONEYWELL_CHECKSUM:
+                human_readable_tokenizer(HWChecksumVals, line);
+                uint8_t errorIdx = rand() % 3;
+                HWChecksumVals[errorIdx] ^= mask;
+                fprintf(fptrCorrHR, "%hhu %hhu %hhu\n", HWChecksumVals[0], HWChecksumVals[1], HWChecksumVals[2]);
+                fwrite(&HWChecksumVals, sizeof(uint8_t), 3, fptrCorrCS);
+                break;
+
             case BIT8_CRC:
             case BIT8_HC_SEC:
             case BIT8_HC_SECDED:

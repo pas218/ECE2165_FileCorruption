@@ -2,6 +2,7 @@
 #define HELPER_FUNCTIONS_H
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "types.h"
 #define NUM_ACCPET_VALUES 10
@@ -120,20 +121,29 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
             wordSize = 12;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             adjust_for_12_bits(&returnVal);
+            break;
+
         case BIT8_CRC:
         case BIT8_HC_SEC:
             wordSize = 12;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
+
         case BIT8_HC_SECDED:
             wordSize = 13;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
+
         case BIT8_DBL_PRES_CHECKSUM:
-        case BIT8_HONEYWELL_CHECKSUM:
             wordSize = 16;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
+
+        case BIT8_HONEYWELL_CHECKSUM:
+            wordSize = 8;
+            get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
+            break;
+            
         default:
             break;
     }
@@ -149,6 +159,21 @@ void apply_16_bit_mask(const uint16_t mask, uint8_t dwCW[])
     // Apply the mask.
     dwCW[0] = dwCW[0] ^ topMask;
     dwCW[1] = dwCW[1] ^ bottomMask;
+}
+
+void human_readable_tokenizer(uint8_t nums[], char line[])
+{
+    const char delim[] = " ";
+    char* token;
+
+    token = strtok(line, delim);
+    nums[0] = atoi(token);
+    token = strtok(NULL, delim);
+    nums[1] = atoi(token);
+    token = strtok(NULL, delim);
+    nums[2] = atoi(token);
+
+
 }
 
 void get_buffer_after_space(const char in_buffer[], char out_buffer[], const int size)
