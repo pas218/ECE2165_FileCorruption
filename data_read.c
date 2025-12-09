@@ -113,6 +113,14 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT8_BIRESID:
+                if(fread(&ResidArithVals, sizeof(uint16_t), 3, fptrCorrCS) == 3)
+                {
+                    residCodeCheck = biresidue_compare_correct(ResidArithVals[0], ResidArithVals[1], ResidArithVals[2]);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -172,8 +180,15 @@ int main(int argc, char **argv)
 
             case BIT8_RESID_ARITH:
                 if(!residCodeCheck) numErrorDetected++;
-                break;
-                
+            break;
+            
+            case BIT8_BIRESID:
+                if(residCodeCheck)
+                {
+                    numErrorDetected++;
+                    numErrorCorrected++;
+                }
+
             default:
                 break;
         }

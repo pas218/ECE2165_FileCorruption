@@ -96,6 +96,12 @@ int main(int argc, char **argv)
                 residArith[1] = lowcost_residuearith_8bDW(counter, 3);
                 residArith[2] = (counter + (uint8_t)(counter-1));
                 break;
+
+            case BIT8_BIRESID:
+                residArith[0] = biresidue_correction_8bDW_12bCW(counter-1);
+                residArith[1] = biresidue_correction_8bDW_12bCW(counter);
+                residArith[2] = (counter + (uint8_t)(counter-1));
+                break;
                 
             default:
                 break;
@@ -140,6 +146,7 @@ int main(int argc, char **argv)
                 break;
 
             case BIT8_RESID_ARITH:
+            case BIT8_BIRESID:
                 fprintf(fptrHR, "%hu %hu %hu\n", residArith[0], residArith[1], residArith[2]);
                 fwrite(&residArith, sizeof(uint16_t), 3, fptrCS);
                 break;

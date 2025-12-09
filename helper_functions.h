@@ -141,6 +141,7 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
 
         case BIT8_HONEYWELL_CHECKSUM:
         case BIT8_RESID_ARITH:
+        case BIT8_BIRESID:
             wordSize = 8;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;

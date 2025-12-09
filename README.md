@@ -12,6 +12,7 @@
 | 5             | 8                   | 4               | SEC Hamming Code       | Correct  |
 | 6             | 8                   | 5               | SECDED Hamming Code    | Correct & Detect |
 | 7             | 8                   | 3 (up to 8)     | Low Cost Residue Arithmetic Code | Detect |
+| 8             | 8                   | 7               | Low Cost Biresidue Arithmetic Code | Correct | 
 
 ## Corruption configurations
 | Corruption Number | Corruption Type | Notes                                                                    |

@@ -72,4 +72,59 @@ uint16_t biresidue_correction_8bDW_12bCW(uint8_t input)
     return output;
 }
 
+bool biresidue_compare_correct(uint16_t input1, uint16_t input2, uint16_t output)
+{
+    int16_t biresidue_lut[15][7] = 
+    {
+        {0U},
+        {0, 1, 16, 0, 256, 0, 0},
+        {0, 512, 2, 0, 32, 0, 0},
+        {0U},
+        {0, 64, 1024, 0, 4, 0, 0},
+        {0U},
+        {0U},
+        {0, 0, 0, -2048, 0, -128, -8},
+        {0, 8, 128, 0, 2048, 0, 0},
+        {0U},
+        {0U},
+        {0, 0, 0, -4, 0, -1024, -64},
+        {0U},
+        {0, 0, 0, -32, 0, -2, -512},
+        {0, 0, 0, -256, 0, -16, -1},
+    };
+
+    uint8_t a = 3;
+    uint8_t b = 4;
+
+    uint8_t Amask = (1<<a)-1;
+    uint8_t Bmask = (1<<b)-1;
+
+    uint8_t input1resb = input1 & Bmask;
+    uint8_t input2resb = input2 & Bmask;
+
+    input1 >>= b;
+    input2 >>= b;
+
+    uint8_t input1resa = input1 & Amask;
+    uint8_t input2resa = input2 & Amask;
+
+    uint8_t outputresa = lcresidarith_resalgo(output, 3);
+    uint8_t outputresb = lcresidarith_resalgo(output, 4);
+
+    uint8_t syndromeA = outputresa - ((input1resa + input2resa) % Amask);
+    if(syndromeA > Amask) syndromeA += Amask;
+
+    uint8_t syndromeB = outputresb - ((input1resb + input2resb) % Bmask);
+    if(syndromeB > Bmask) syndromeB += Bmask;
+
+    //lookup table for correction
+    int16_t lutModifier = biresidue_lut[syndromeB][syndromeA];
+    output -= lutModifier;
+
+    printf("output: %d, lutMod: %d, syndA: %d, syndB: %d\n", output, lutModifier, syndromeA, syndromeB);
+
+    return lutModifier != 0;
+
+}
+
 #endif

@@ -6,6 +6,7 @@
 #define BIT8_HC_SEC 5
 #define BIT8_HC_SECDED 6
 #define BIT8_RESID_ARITH 7
+#define BIT8_BIRESID 8
 
 #define CORR_SNGL_BIT 0
 #define CORR_BURST 1

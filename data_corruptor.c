@@ -131,6 +131,7 @@ int main(int argc, char **argv)
                 break;
 
             case BIT8_RESID_ARITH:
+            case BIT8_BIRESID:
                 human_readable_tokenizer_16b(ResidArithVals, line);
                 ResidArithVals[2] ^= mask;
                 fprintf(fptrCorrHR, "%hu %hu %hu\n", ResidArithVals[0], ResidArithVals[1], ResidArithVals[2]);
