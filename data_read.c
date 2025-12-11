@@ -64,7 +64,6 @@ int main(int argc, char **argv)
     float timeAverage = 0.0;
     while (1)
     {
-        gettimeofday(&tval_before, NULL);
         switch (configNumber)
         {
             // See README for configuration details.
@@ -74,7 +73,9 @@ int main(int argc, char **argv)
                 if(fread(dwCW, sizeof(uint8_t), 2, fptrCorrCS) == 2)
                 {
                     checksumSize = 4;
+                    gettimeofday(&tval_before, NULL);
                     checksum = checksumFuncPtrArr[configNumber](dwCW[0], checksumSize);
+                    gettimeofday(&tval_after, NULL);
                 }
                 else breakCond = true;
                 break;
@@ -83,7 +84,9 @@ int main(int argc, char **argv)
                 // Make a checksum for every two datawords.
                 if(fread(HWChecksumVals, sizeof(uint8_t), 3, fptrCorrCS) == 3)
                 {
+                    gettimeofday(&tval_before, NULL);
                     checksum = checksumFuncPtrArr[configNumber](HWChecksumVals[0], HWChecksumVals[1]);
+                    gettimeofday(&tval_after, NULL);
                 }
                 else breakCond = true;
                 break;
@@ -91,8 +94,10 @@ int main(int argc, char **argv)
             case BIT8_CRC:
                 if(fread(&crc, sizeof(uint16_t), 1, fptrCorrCS) == 1)
                 {
+                    gettimeofday(&tval_before, NULL);
                     crcSyndrome = CRC4_decode (crc, 12, 0x17);
                     // printf("%d\n", crcSyndrome);
+                    gettimeofday(&tval_after, NULL);
                 }
                 else breakCond = true;
                 break;
@@ -100,7 +105,9 @@ int main(int argc, char **argv)
             case BIT8_HC_SEC:
                 if(fread(&HC, sizeof(uint16_t), 1, fptrCorrCS) == 1)
                 {
+                    gettimeofday(&tval_before, NULL);
                     HCSyndrome = HC_12bCW_8bDW_syndrome_SEC(&HC);
+                    gettimeofday(&tval_after, NULL);
                 }
                 else breakCond = true;
                 break;
@@ -108,7 +115,9 @@ int main(int argc, char **argv)
             case BIT8_HC_SECDED:
                 if(fread(&HC, sizeof(uint16_t), 1, fptrCorrCS) == 1)
                 {
+                    gettimeofday(&tval_before, NULL);
                     HCSECDED = HC_13bCW_8bDW_syndrome_SECDED(&HC, &HCSyndrome);
+                    gettimeofday(&tval_after, NULL);
                 }
                 else breakCond = true;
                 break;
@@ -116,7 +125,9 @@ int main(int argc, char **argv)
             case BIT8_RESID_ARITH:
                 if(fread(&ResidArithVals, sizeof(uint16_t), 3, fptrCorrCS) == 3)
                 {
+                    gettimeofday(&tval_before, NULL);
                     residCodeCheck = lcresidarith_extract_compare(ResidArithVals[0], ResidArithVals[1], ResidArithVals[2], 3);
+                    gettimeofday(&tval_after, NULL);
                 }
                 else breakCond = true;
                 break;
@@ -124,7 +135,9 @@ int main(int argc, char **argv)
             case BIT8_BIRESID:
                 if(fread(&ResidArithVals, sizeof(uint16_t), 3, fptrCorrCS) == 3)
                 {
+                    gettimeofday(&tval_before, NULL);
                     residCodeCheck = biresidue_compare_correct(ResidArithVals[0], ResidArithVals[1], ResidArithVals[2]);
+                    gettimeofday(&tval_after, NULL);
                 }
                 else breakCond = true;
                 break;
@@ -134,7 +147,6 @@ int main(int argc, char **argv)
                 break;
         }
 
-        gettimeofday(&tval_after, NULL);
         float getDiff = timediff_us(tval_before, tval_after);
         timeAverage += getDiff;
 
