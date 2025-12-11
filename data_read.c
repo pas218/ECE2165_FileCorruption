@@ -56,6 +56,9 @@ int main(int argc, char **argv)
     uint16_t ResidArithVals[3];
     bool residCodeCheck = false;
 
+    uint32_t dwCW32[2];
+    uint32_t checksum32;
+
     bool breakCond = false;
     int numErrorDetected = 0;
     int numErrorCorrected = 0;
@@ -142,6 +145,17 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT32_SNGL_PRES_CHECKSUM:
+                if(fread(dwCW32, sizeof(uint32_t), 2, fptrCorrCS) == 2)
+                {
+                    checksumSize = 16;
+                    gettimeofday(&tval_before, NULL);
+                    checksum32 = checksum_16bitCW_32bDW_snglPrec(dwCW32[0], checksumSize);
+                    gettimeofday(&tval_after, NULL);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -167,6 +181,7 @@ int main(int argc, char **argv)
                     numErrorDetected++;
                 }
                 break;
+
             case BIT8_HONEYWELL_CHECKSUM:
                 if(checksum != HWChecksumVals[2]) numErrorDetected++;
                 break;
@@ -175,6 +190,7 @@ int main(int argc, char **argv)
                 if(crcSyndrome) numErrorDetected++;
                 else printf("crc codeword not fail: %d\n", crc);
                 break;
+
             case BIT8_HC_SEC:
                 if(HCSyndrome)
                 {
@@ -200,13 +216,20 @@ int main(int argc, char **argv)
 
             case BIT8_RESID_ARITH:
                 if(!residCodeCheck) numErrorDetected++;
-            break;
+                break;
             
             case BIT8_BIRESID:
                 if(residCodeCheck)
                 {
                     numErrorDetected++;
                     numErrorCorrected++;
+                }
+                break;
+
+            case BIT32_SNGL_PRES_CHECKSUM:
+                if(checksum32 != dwCW32[1])
+                {
+                    numErrorDetected++;
                 }
 
             default:
