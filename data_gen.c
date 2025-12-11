@@ -76,7 +76,7 @@ int main(int argc, char **argv)
                 break;
 
             case BIT8_CRC:
-                CRC = CRC4 (counter, 8, 0x17); // defaulted generator polynomial
+                CRC = CRC4_encode (counter, 8, 0x17); // defaulted generator polynomial
                 // printf("0x%x: 0x%x.\n", counter, CRC);
                 break;
 

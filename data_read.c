@@ -91,7 +91,7 @@ int main(int argc, char **argv)
             case BIT8_CRC:
                 if(fread(&crc, sizeof(uint16_t), 1, fptrCorrCS) == 1)
                 {
-                    crcSyndrome = CRC4(crc, 12, 0x17);
+                    crcSyndrome = CRC4_decode (crc, 12, 0x17);
                     // printf("%d\n", crcSyndrome);
                 }
                 else breakCond = true;
