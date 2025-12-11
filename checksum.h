@@ -41,4 +41,17 @@ uint8_t HWChecksum_4bitCW_8bDW (uint8_t dataword1_2, uint8_t dataword3_4)
     return dataword1_2 + dataword3_4;
 }
 
+uint16_t checksum_16bitCW_32bDW_snglPrec (uint32_t dataword, uint32_t sizeChecksum)
+{
+    uint32_t returnVal = 0;
+
+    uint32_t bottomHalf = dataword & 0x0000FFFF;
+    uint32_t topHalf = dataword >> sizeChecksum;   // Make sure both halves align with each other;
+    uint32_t answerBit = 0;
+    uint32_t carry = 0;
+
+    // Return the addition of bottom and top half, but only keep the first 4 bits.
+    return (bottomHalf + topHalf) & 0x0000FFFF;
+}
+
 #endif

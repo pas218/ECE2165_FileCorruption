@@ -12,7 +12,16 @@
 | 5             | 8                   | 4               | SEC Hamming Code       | Correct  |
 | 6             | 8                   | 5               | SECDED Hamming Code    | Correct & Detect |
 | 7             | 8                   | 3 (up to 8)     | Low Cost Residue Arithmetic Code | Detect |
-| 8             | 8                   | 7               | Low Cost Biresidue Arithmetic Code | Correct | 
+| 8             | 8                   | 7               | Low Cost Biresidue Arithmetic Code | Correct |
+| 9             | 32                  | 16              | SnglePrec Checksum     | Detect   |
+| 10            | 32                  | 16              | DoublePrec Checksum    | Detect   |
+| 11            | 32                  | 16              | SnglePrec Res Checksum | Detect   |
+| 12            | 32                  | 16              | Honeywell Checksum     | Detect   |
+| 13            | 32                  | 4               | CRC                    | Detect   |
+| 14            | 32                  | 6               | SEC Hamming Code       | Correct  |
+| 15            | 32                  | 7               | SECDED Hamming Code    | Correct & Detect |
+| 16            | 32                  | 3 (up to 8)     | Low Cost Residue Arithmetic Code | Detect |
+| 17            | 32                  | 13              | Low Cost Biresidue Arithmetic Code | Correct |
 
 ## Corruption configurations
 | Corruption Number | Corruption Type | Notes                                                                    |

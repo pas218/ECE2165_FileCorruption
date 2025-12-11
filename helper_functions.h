@@ -105,7 +105,7 @@ void get_raw_mask_16bit(int wordSize, int corruptionType, int corruptionTypeOpti
     }
 }
 
-uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corruptionTypeOption)
+uint16_t calculate_bit_mask(int configNumber, int corruptionType, int corruptionTypeOption)
 {
     uint16_t returnVal = 0;
     int wordSize;
@@ -131,6 +131,9 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
             break;
 
         case BIT8_DBL_PRES_CHECKSUM:
+        case BIT32_SNGL_PRES_CHECKSUM:
+        case BIT32_DBL_PRES_CHECKSUM:
+        case BIT32_SNGL_PRES_RES_CHECKSUM:
             wordSize = 16;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
@@ -141,13 +144,18 @@ uint16_t calculate_16bit_mask(int configNumber, int corruptionType, int corrupti
             wordSize = 8;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
-
             
         default:
             break;
     }
     //printf("Mask inside: %d.\n", returnVal);
     return returnVal;
+}
+
+uint32_t bitmask_16b_to_32b(uint16_t mask16b)
+{
+    uint8_t shift = rand() % 16;
+    return (uint32_t)mask16b << shift;
 }
 
 void apply_16_bit_mask(const uint16_t mask, uint8_t dwCW[])
@@ -235,5 +243,18 @@ uint8_t get_parity(uint32_t data, uint32_t size)
     // printf("numOnes: %d\n", sumOnes);
 
     return sumOnes & 0x1;
+}
+
+uint32_t rand32(void)
+{
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    srand(ts.tv_nsec);
+
+    uint32_t top = rand();
+    uint32_t bot = rand();
+    
+    return ((top << 16) | bot) & 0xFFFFFFFF;
+
 }
 #endif
