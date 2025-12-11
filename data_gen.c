@@ -13,12 +13,6 @@
 #include "residuecodes.h"
 #include "types.h"
 
-#define BITS_PER_BYTE  8
-#define BYTES_PER_CHAR 1
-#define NUM_CHAR       1  
-#define SIZE_DW_BITS (BITS_PER_BYTE*BYTES_PER_CHAR*NUM_CHAR)
-#define MAX_DW_VALUE (1 << SIZE_DW_BITS)-1
-
 
 int main(int argc, char **argv)
 {

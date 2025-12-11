@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "helper_functions.h"
+#include "types.h"
 
 int main(int argc, char **argv)
 {
@@ -77,6 +78,7 @@ int main(int argc, char **argv)
     printf("Average time to DECODE: %f.\n", avgTimeDecode);
     printf("Average percent DETECTED corruptions: %f.\n", avgDetected);
     printf("Average percent CORRECTED corruptions: %f.\n", avgCorrected);
+    printf("Number of lines tested: %d.\n", MAX_DW_VALUE+1);
 
     fclose(fptrTiming);
     fclose(fptrDetected);

@@ -64,10 +64,6 @@ void get_raw_mask_16bit(int wordSize, int corruptionType, int corruptionTypeOpti
         case CORR_RAND:
             // Initialize vector;
             int8_t positions[16] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-            for (int i = 0; i < 16; i++)
-            {
-                positions[i] = -1;
-            }
 
             uint8_t counter = 0;
             while(1)
