@@ -80,6 +80,7 @@ int main(int argc, char **argv)
     uint16_t CW;
     uint8_t dataOrCS;
     uint8_t errorIdx;
+    uint64_t CW64;
 
     // Corrupt the human readable and binary file.
     while (fgets(line, sizeof(line), fptrHR) != NULL)
@@ -178,6 +179,13 @@ int main(int argc, char **argv)
                 fprintf(fptrCorrHR, "%u %u %u\n", HWChecksumVals32[0], HWChecksumVals32[1], HWChecksumVals32[2]);
                 fwrite(&HWChecksumVals32, sizeof(uint32_t), 3, fptrCorrCS);
                 break;
+
+            case BIT32_CRC:
+                CW64 = strtoul(line, NULL, 10);
+                CW64 ^= bitmask_16b_to_32b(mask);
+                fprintf(fptrCorrHR, "%lu\n", CW64);
+                fwrite(&CW64, sizeof(uint64_t), 1, fptrCorrCS);
+                
 
         }
         

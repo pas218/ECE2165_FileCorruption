@@ -56,6 +56,7 @@ uint8_t CRC4_decode (uint64_t dataword, uint8_t dwSize, uint8_t generator_polyno
         // printf("0x%x\n", circuitbits);
     }
 
+    // printf("circuit bits after calc: %x\n", circuitbits);
     crc_append = circuitbits & 0x0F;
 
     return crc_append;

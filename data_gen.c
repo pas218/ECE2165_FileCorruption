@@ -50,6 +50,7 @@ int main(int argc, char **argv)
     uint16_t checksum32;
     uint32_t checksum32doub;
     uint32_t checksum32size = 16;
+    uint64_t CRC64;
 
     // float get_elapsed_ms(struct timespec start, struct timespec end) {
     // Variables for keeping track of time.
@@ -148,6 +149,14 @@ int main(int argc, char **argv)
                 checksum32doub = HWChecksum_32bitCW_32bDW(currEntry, currEntry2);
                 gettimeofday(&tval_after, NULL);
                 break;
+            
+            case BIT32_CRC:
+                currEntry = rand32();
+                gettimeofday(&tval_before, NULL);
+                CRC64 = CRC4_encode (currEntry, 32, 0x17); // defaulted generator polynomial
+                // printf("0x%x: 0x%x.\n", counter, CRC);
+                gettimeofday(&tval_after, NULL);
+                break;
 
                 
             default:
@@ -216,6 +225,10 @@ int main(int argc, char **argv)
                 fwrite(&currEntry2, sizeof(uint32_t), 1, fptrCS);
                 fwrite(&checksum32doub, sizeof(uint32_t), 1, fptrCS);
                 break;
+
+            case BIT32_CRC:
+                fprintf(fptrHR, "%lu\n", CRC64);
+                fwrite(&CRC64, sizeof(uint64_t), 1, fptrCS);
             
             default:
                 break;

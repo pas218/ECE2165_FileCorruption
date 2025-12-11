@@ -50,6 +50,7 @@ int main(int argc, char **argv)
     uint8_t HWChecksumVals[3];
     uint32_t HWChecksumVals32[3];
     uint16_t crc = 0;
+    uint64_t crc64 = 0;
     uint16_t crcSyndrome;
     uint16_t HC = 0;
     uint8_t HCSyndrome;
@@ -189,6 +190,17 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT32_CRC:
+                if(fread(&crc64, sizeof(uint64_t), 1, fptrCorrCS) == 1)
+                {
+                    gettimeofday(&tval_before, NULL);
+                    crcSyndrome = CRC4_decode (crc64, 36, 0x17);
+                    // printf("%d\n", crcSyndrome);
+                    gettimeofday(&tval_after, NULL);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -220,8 +232,9 @@ int main(int argc, char **argv)
                 break;
 
             case BIT8_CRC:
+            case BIT32_CRC:
                 if(crcSyndrome) numErrorDetected++;
-                else printf("crc codeword not fail: %d\n", crc);
+                // else printf("crc codeword not fail: %lu, syndrome: %x\n", crc64, crcSyndrome);
                 break;
 
             case BIT8_HC_SEC:
