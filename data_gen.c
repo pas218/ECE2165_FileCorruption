@@ -51,6 +51,7 @@ int main(int argc, char **argv)
     uint32_t checksum32doub;
     uint32_t checksum32size = 16;
     uint64_t CRC64;
+    uint64_t HCcodeword64 = 0;
 
     // float get_elapsed_ms(struct timespec start, struct timespec end) {
     // Variables for keeping track of time.
@@ -158,6 +159,14 @@ int main(int argc, char **argv)
                 gettimeofday(&tval_after, NULL);
                 break;
 
+            case BIT32_HC_SEC:
+                currEntry = rand32();
+                gettimeofday(&tval_before, NULL);
+                HCcodeword64 = HC_38bCW_32bDW(currEntry);
+                // printf("0x%x: 0x%x.\n", counter, HCcodeword);
+                gettimeofday(&tval_after, NULL);
+                break;
+
                 
             default:
                 break;
@@ -229,6 +238,12 @@ int main(int argc, char **argv)
             case BIT32_CRC:
                 fprintf(fptrHR, "%lu\n", CRC64);
                 fwrite(&CRC64, sizeof(uint64_t), 1, fptrCS);
+                break;
+
+            case BIT32_HC_SEC:
+                fprintf(fptrHR, "%lu\n", HCcodeword64);
+                fwrite(&HCcodeword64, sizeof(uint64_t), 1, fptrCS);
+                break;
             
             default:
                 break;

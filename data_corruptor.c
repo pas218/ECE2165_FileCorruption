@@ -181,10 +181,13 @@ int main(int argc, char **argv)
                 break;
 
             case BIT32_CRC:
+            case BIT32_HC_SEC:
+            case BIT32_HC_SECDED:
                 CW64 = strtoul(line, NULL, 10);
                 CW64 ^= bitmask_16b_to_32b(mask);
                 fprintf(fptrCorrHR, "%lu\n", CW64);
                 fwrite(&CW64, sizeof(uint64_t), 1, fptrCorrCS);
+                break;
                 
 
         }

@@ -60,6 +60,7 @@ int main(int argc, char **argv)
 
     uint32_t dwCW32[2];
     uint32_t checksum32;
+    uint64_t HC64 = 0;
 
     bool breakCond = false;
     int numErrorDetected = 0;
@@ -201,6 +202,16 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT32_HC_SEC:
+                if(fread(&HC64, sizeof(uint64_t), 1, fptrCorrCS) == 1)
+                {
+                    gettimeofday(&tval_before, NULL);
+                    HCSyndrome = HC_38bCW_32bDW_syndrome_SEC(&HC64);
+                    gettimeofday(&tval_after, NULL);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -238,6 +249,7 @@ int main(int argc, char **argv)
                 break;
 
             case BIT8_HC_SEC:
+            case BIT32_HC_SEC:
                 if(HCSyndrome)
                 {
                     numErrorDetected++;

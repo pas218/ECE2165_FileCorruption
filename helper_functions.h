@@ -250,9 +250,9 @@ float timediff_us(struct timeval start, struct timeval end)
     return (float)(end.tv_sec - start.tv_sec) * 1000000.0 + (float)(end.tv_usec - start.tv_usec);
 }
 
-uint8_t get_parity(uint32_t data, uint32_t size)
+uint8_t get_parity(uint64_t data, uint32_t size)
 {
-    uint8_t sumOnes = 0;
+    uint16_t sumOnes = 0;
     // printf("data: %x -- ", data);
     for(int i = 0; i < size; i++)
     {
