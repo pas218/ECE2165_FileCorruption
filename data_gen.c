@@ -47,6 +47,7 @@ int main(int argc, char **argv)
 
     uint32_t currEntry;
     uint16_t checksum32;
+    uint32_t checksum32doub;
     uint32_t checksum32size = 16;
 
     // float get_elapsed_ms(struct timespec start, struct timespec end) {
@@ -119,9 +120,16 @@ int main(int argc, char **argv)
                 break;
 
             case BIT32_SNGL_PRES_CHECKSUM:
-                gettimeofday(&tval_before, NULL);
                 currEntry = rand32();
+                gettimeofday(&tval_before, NULL);
                 checksum32 = checksum_16bitCW_32bDW_snglPrec(currEntry, checksum32size);
+                gettimeofday(&tval_after, NULL);
+                break;
+
+            case BIT32_DBL_PRES_CHECKSUM:
+                currEntry = rand32();
+                gettimeofday(&tval_before, NULL);
+                checksum32doub = checksum_16bitCW_32bDW_doubPrec(currEntry, checksum32size);
                 gettimeofday(&tval_after, NULL);
                 break;
                 
@@ -174,12 +182,16 @@ int main(int argc, char **argv)
 
             case BIT32_SNGL_PRES_CHECKSUM:
             case BIT32_SNGL_PRES_RES_CHECKSUM:
-            case BIT32_DBL_PRES_CHECKSUM:
                 fprintf(fptrHR, "%u %u\n", currEntry, checksum32);
                 fwrite(&currEntry, sizeof(uint32_t), 1, fptrCS);
                 fwrite(&checksum32, sizeof(uint16_t), 1, fptrCS);
                 break;
-
+            case BIT32_DBL_PRES_CHECKSUM:
+                fprintf(fptrHR, "%u %u\n", currEntry, checksum32doub);
+                fwrite(&currEntry, sizeof(uint32_t), 1, fptrCS);
+                fwrite(&checksum32doub, sizeof(uint32_t), 1, fptrCS);
+                break;
+            
             default:
                 break;
 

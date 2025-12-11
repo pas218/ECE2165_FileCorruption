@@ -77,6 +77,7 @@ int main(int argc, char **argv)
     uint8_t HWChecksumVals[3];
     uint16_t ResidArithVals[3];
     uint16_t CW;
+    uint8_t dataOrCS;
 
     // Corrupt the human readable and binary file.
     while (fgets(line, sizeof(line), fptrHR) != NULL)
@@ -140,12 +141,11 @@ int main(int argc, char **argv)
                 break;
 
             case BIT32_SNGL_PRES_CHECKSUM:
-            case BIT32_DBL_PRES_CHECKSUM:
             case BIT32_SNGL_PRES_RES_CHECKSUM:
                 get_buffer_after_space(line, line_after_space, BUFF_SIZE);
                 dwCW32[0] = (uint32_t)atoi(line);
                 dwCW32[1] = (uint32_t)atoi(line_after_space);
-                uint8_t dataOrCS = rand() % 2;
+                dataOrCS = rand() % 2;
                 if(dataOrCS) dwCW32[1] ^= mask;
                 else
                 {
@@ -156,6 +156,19 @@ int main(int argc, char **argv)
                 fwrite(&dwCW32[0], sizeof(uint32_t), 1, fptrCorrCS);
                 fwrite(&dwCW32[1], sizeof(uint16_t), 1, fptrCorrCS);
                 break;
+
+            case BIT32_DBL_PRES_CHECKSUM:
+                get_buffer_after_space(line, line_after_space, BUFF_SIZE);
+                dwCW32[0] = (uint32_t)atoi(line);
+                dwCW32[1] = (uint32_t)atoi(line_after_space);
+                dataOrCS = rand() % 2;
+                dwCW32[dataOrCS] ^= bitmask_16b_to_32b(mask);
+
+                fprintf(fptrCorrHR, "%u %u\n", dwCW32[0], dwCW32[1]);
+                fwrite(&dwCW32[0], sizeof(uint32_t), 1, fptrCorrCS);
+                fwrite(&dwCW32[1], sizeof(uint32_t), 1, fptrCorrCS);
+                break;
+
         }
         
         counter++;

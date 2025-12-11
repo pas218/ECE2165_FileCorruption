@@ -156,6 +156,17 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT32_DBL_PRES_CHECKSUM:
+                if(fread(dwCW32, sizeof(uint32_t), 2, fptrCorrCS) == 2)
+                {
+                    checksumSize = 16;
+                    gettimeofday(&tval_before, NULL);
+                    checksum32 = checksum_16bitCW_32bDW_doubPrec(dwCW32[0], checksumSize);
+                    gettimeofday(&tval_after, NULL);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -227,6 +238,7 @@ int main(int argc, char **argv)
                 break;
 
             case BIT32_SNGL_PRES_CHECKSUM:
+            case BIT32_DBL_PRES_CHECKSUM:
                 if(checksum32 != dwCW32[1])
                 {
                     numErrorDetected++;
