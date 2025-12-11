@@ -22,7 +22,7 @@ int main(int argc, char **argv)
         configNumber = BIT8_SNGL_PRES_CHECKSUM;
     }
 
-    printf("Data read.\n");
+    //printf("Data read.\n");
 
     FILE *fptrCorrCS;
     // Get file pointers for statistics.
@@ -266,11 +266,11 @@ int main(int argc, char **argv)
     // Find the average by dividing by number of iterrations.
     timeAverage /= (float)(totalValues);
 
-    printf("The average time to decode the codeword is: %f microseconds.\n", timeAverage);
-    printf("Number of errors detected: %d.\n", numErrorDetected);
-    printf("Total corrupted values: %d.\n", totalValues);
-    printf("Percent errors detected: %f.\n", (float)numErrorDetected/(float)totalValues);
-    printf("Percent errors corrcted: %f.\n", (float)numErrorCorrected/(float)totalValues);
+    //printf("The average time to decode the codeword is: %f microseconds.\n", timeAverage);
+    //printf("Number of errors detected: %d.\n", numErrorDetected);
+    //printf("Total corrupted values: %d.\n", totalValues);
+    //printf("Percent errors detected: %f.\n", (float)numErrorDetected/(float)totalValues);
+    //printf("Percent errors corrcted: %f.\n", (float)numErrorCorrected/(float)totalValues);
     // print to statistics files.
     fprintf(fptrTiming, "%f\n", timeAverage);
     fprintf(fptrDetected, "%f\n", (float)numErrorDetected/(float)totalValues);
@@ -280,5 +280,5 @@ int main(int argc, char **argv)
     fclose(fptrTiming);
     fclose(fptrDetected);
     fclose(fptrCorrected);
-    printf("End data read.\n");
+    //printf("End data read.\n");
 }

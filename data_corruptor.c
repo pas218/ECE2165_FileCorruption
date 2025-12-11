@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     //printf("CorruptionType: %d.\n", corruptionType);
     //printf("corruptionTypeOption: %d.\n", corruptionTypeOption);
     
-    printf("Start data corruptor.\n");
+    //printf("Start data corruptor.\n");
     FILE *fptrHR;
     FILE *fptrCS;
 	
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
     
 
 
-    printf("End data corruptor.\n");
+    //printf("End data corruptor.\n");
     return 0;
 
 }

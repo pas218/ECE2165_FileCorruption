@@ -219,7 +219,7 @@ int main(int argc, char **argv)
     // Find the average by dividing by number of iterrations.
     timeAverage /= (float)(MAX_DW_VALUE+1);
 
-    printf("The average time to encode the codeword is: %f microseconds.\n", timeAverage);
+    //printf("The average time to encode the codeword is: %f microseconds.\n", timeAverage);
     // Print the time to encoder to file.
     fprintf(fptrTiming, "%f\n", timeAverage);
 

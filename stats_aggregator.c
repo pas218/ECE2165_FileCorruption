@@ -7,16 +7,38 @@
 int main(int argc, char **argv)
 {
     int numIterations;
-    if (argc >= 2)
+    int configNumber;
+    int corruptionType;
+    int corruptionTypeOption = -1;
+    if (argc >= 5)
     {
         numIterations = atoi(argv[1]);
+        configNumber = atoi(argv[2]);
+        corruptionType = atoi(argv[3]);
+        corruptionTypeOption = atoi(argv[4]);
+
+    }
+    else if (argc == 4)
+    {
+        numIterations = atoi(argv[1]);
+        configNumber = atoi(argv[2]);
+        corruptionType = atoi(argv[3]);
+        
+        // Set default length for burst errors.
+        if ((corruptionType == CORR_BURST) || (corruptionType == CORR_RAND))
+        {
+            corruptionTypeOption = 3;
+        }
     }
     else
     {
         numIterations = DEFAULT_ITERATIONS;
+        configNumber = BIT8_SNGL_PRES_CHECKSUM;
+        corruptionType = CORR_SNGL_BIT;
+        corruptionTypeOption = 3;
     }
 
-    printf("Start data aggregator.\n");
+    //printf("Start data aggregator.\n");
 
     FILE *fptrTiming;
     FILE *fptrDetected;
@@ -73,6 +95,9 @@ int main(int argc, char **argv)
     printf("\n");
     printf("---------- FINAL STATISTICS ----------\n");
     printf("\n");
+    printf("Config number: %d.\n", configNumber);
+    printf("Corruption Type: %d.\n", corruptionType);
+    printf("Corruption Type Option: %d.\n", corruptionTypeOption);
     printf("Number iterations: %d.\n", numIterations);
     printf("Average time to ENCODE: %f.\n", avgTimeEncode);
     printf("Average time to DECODE: %f.\n", avgTimeDecode);
@@ -83,7 +108,7 @@ int main(int argc, char **argv)
     fclose(fptrTiming);
     fclose(fptrDetected);
     fclose(fptrCorrected);
-    printf("End data aggregator.\n");
+    //printf("End data aggregator.\n");
     return 0;
 
 }
