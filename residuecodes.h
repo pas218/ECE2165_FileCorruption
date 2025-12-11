@@ -121,7 +121,7 @@ bool biresidue_compare_correct(uint16_t input1, uint16_t input2, uint16_t output
     int16_t lutModifier = biresidue_lut[syndromeB][syndromeA];
     output -= lutModifier;
 
-    printf("output: %d, lutMod: %d, syndA: %d, syndB: %d\n", output, lutModifier, syndromeA, syndromeB);
+    // printf("output: %d, lutMod: %d, syndA: %d, syndB: %d\n", output, lutModifier, syndromeA, syndromeB);
 
     return lutModifier != 0;
 
