@@ -13,12 +13,6 @@
 #include "residuecodes.h"
 #include "types.h"
 
-#define BITS_PER_BYTE  8
-#define BYTES_PER_CHAR 1
-#define NUM_CHAR       1  
-#define SIZE_DW_BITS (BITS_PER_BYTE*BYTES_PER_CHAR*NUM_CHAR)
-#define MAX_DW_VALUE (1 << SIZE_DW_BITS)-1
-
 
 int main(int argc, char **argv)
 {
@@ -57,54 +51,70 @@ int main(int argc, char **argv)
     float timeAverage = 0.0;
     while (1)
     {
-        gettimeofday(&tval_before, NULL);
         switch (configNumber)
         {
-
             // See README for configuration details.s
             case BIT8_SNGL_PRES_CHECKSUM:
                 checksumSize = 4;
+                gettimeofday(&tval_before, NULL);
                 checksum = checksum_4bitCW_8bDW_snglPrec(counter, checksumSize);
+                gettimeofday(&tval_after, NULL);
                 break;
 
             case BIT8_DBL_PRES_CHECKSUM:
                 checksumSize = 4;
+                gettimeofday(&tval_before, NULL);
                 checksum = checksum_4bitCW_8bDW_doubPrec(counter, checksumSize);
+                gettimeofday(&tval_after, NULL);
                 break;
 
             case BIT8_SNGL_PRES_RES_CHECKSUM:
                 checksumSize = 4;
+                gettimeofday(&tval_before, NULL);
                 checksum = residueChecksum_4bitCW_8bDW_snglPrec(counter, checksumSize);
+                gettimeofday(&tval_after, NULL);
                 break;
 
             case BIT8_HONEYWELL_CHECKSUM:
+                gettimeofday(&tval_before, NULL);
                 checksum = HWChecksum_4bitCW_8bDW (counter-1, counter);
+                gettimeofday(&tval_after, NULL);
                 break;
 
             case BIT8_CRC:
+                gettimeofday(&tval_before, NULL);
                 CRC = CRC4 (counter, 8, 0x17); // defaulted generator polynomial
                 // printf("0x%x: 0x%x.\n", counter, CRC);
+                gettimeofday(&tval_after, NULL);
                 break;
 
             case BIT8_HC_SEC:
+                gettimeofday(&tval_before, NULL);
                 HCcodeword = HC_12bCW_8bDW(counter);
                 // printf("0x%x: 0x%x.\n", counter, HCcodeword);
+                gettimeofday(&tval_after, NULL);
                 break;
 
             case BIT8_HC_SECDED:
+                gettimeofday(&tval_before, NULL);
                 HCcodeword = HC_13bCW_8bDW(counter);
+                gettimeofday(&tval_after, NULL);
                 break;
 
             case BIT8_RESID_ARITH:
+                gettimeofday(&tval_before, NULL);
                 residArith[0] = lowcost_residuearith_8bDW(counter-1, 3);
                 residArith[1] = lowcost_residuearith_8bDW(counter, 3);
                 residArith[2] = (counter + (uint8_t)(counter-1));
+                gettimeofday(&tval_after, NULL);
                 break;
 
             case BIT8_BIRESID:
+                gettimeofday(&tval_before, NULL);
                 residArith[0] = biresidue_correction_8bDW_12bCW(counter-1);
                 residArith[1] = biresidue_correction_8bDW_12bCW(counter);
                 residArith[2] = (counter + (uint8_t)(counter-1));
+                gettimeofday(&tval_after, NULL);
                 break;
                 
             default:
@@ -113,7 +123,6 @@ int main(int argc, char **argv)
         
         
         // Add to the running average.
-        gettimeofday(&tval_after, NULL);
         float getDiff = timediff_us(tval_before, tval_after);
         // Calculate the elapsed time microseconds.
         timeAverage += getDiff;
