@@ -48,6 +48,7 @@ int main(int argc, char **argv)
     uint8_t checksumSize;
     uint8_t checksum;
     uint8_t HWChecksumVals[3];
+    uint32_t HWChecksumVals32[3];
     uint16_t crc = 0;
     uint16_t crcSyndrome;
     uint16_t HC = 0;
@@ -178,6 +179,16 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT32_HONEYWELL_CHECKSUM:
+                if(fread(HWChecksumVals32, sizeof(uint32_t), 3, fptrCorrCS) == 3)
+                {
+                    gettimeofday(&tval_before, NULL);
+                    checksum32 = HWChecksum_32bitCW_32bDW(HWChecksumVals32[0], HWChecksumVals32[1]);
+                    gettimeofday(&tval_after, NULL);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -255,6 +266,14 @@ int main(int argc, char **argv)
                 {
                     numErrorDetected++;
                 }
+                break;
+
+            case BIT32_HONEYWELL_CHECKSUM:
+                if(checksum32 != HWChecksumVals32[2])
+                {
+                    numErrorDetected++;
+                }
+                break;
 
             default:
                 break;

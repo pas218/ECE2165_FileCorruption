@@ -134,6 +134,12 @@ uint16_t calculate_bit_mask(int configNumber, int corruptionType, int corruption
         case BIT32_SNGL_PRES_CHECKSUM:
         case BIT32_DBL_PRES_CHECKSUM:
         case BIT32_SNGL_PRES_RES_CHECKSUM:
+        case BIT32_HONEYWELL_CHECKSUM:
+        case BIT32_CRC:
+        case BIT32_HC_SEC:
+        case BIT32_HC_SECDED:
+        case BIT32_RESID_ARITH:
+        case BIT32_BIRESID:
             wordSize = 16;
             get_raw_mask_16bit(wordSize, corruptionType, corruptionTypeOption, &returnVal);
             break;
@@ -192,6 +198,19 @@ void human_readable_tokenizer_16b(uint16_t nums[], char line[])
     nums[1] = atoi(token);
     token = strtok(NULL, delim);
     nums[2] = atoi(token);
+}
+
+void human_readable_tokenizer_32b(uint32_t nums[], char line[])
+{
+    const char delim[] = " ";
+    char* token;
+
+    token = strtok(line, delim);
+    nums[0] = strtoul(token, NULL, 10);
+    token = strtok(NULL, delim);
+    nums[1] = strtoul(token, NULL, 10);
+    token = strtok(NULL, delim);
+    nums[2] = strtoul(token, NULL, 10);
 }
 
 void get_buffer_after_space(const char in_buffer[], char out_buffer[], const int size)

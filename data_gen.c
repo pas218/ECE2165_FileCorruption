@@ -46,6 +46,7 @@ int main(int argc, char **argv)
     uint16_t residArith[3];
 
     uint32_t currEntry;
+    uint32_t currEntry2;
     uint16_t checksum32;
     uint32_t checksum32doub;
     uint32_t checksum32size = 16;
@@ -140,6 +141,14 @@ int main(int argc, char **argv)
                 gettimeofday(&tval_after, NULL);
                 break;
 
+            case BIT32_HONEYWELL_CHECKSUM:
+                currEntry = rand32();
+                currEntry2 = rand32();
+                gettimeofday(&tval_before, NULL);
+                checksum32doub = HWChecksum_32bitCW_32bDW(currEntry, currEntry2);
+                gettimeofday(&tval_after, NULL);
+                break;
+
                 
             default:
                 break;
@@ -194,10 +203,17 @@ int main(int argc, char **argv)
                 fwrite(&currEntry, sizeof(uint32_t), 1, fptrCS);
                 fwrite(&checksum32, sizeof(uint16_t), 1, fptrCS);
                 break;
-                
+
             case BIT32_DBL_PRES_CHECKSUM:
                 fprintf(fptrHR, "%u %u\n", currEntry, checksum32doub);
                 fwrite(&currEntry, sizeof(uint32_t), 1, fptrCS);
+                fwrite(&checksum32doub, sizeof(uint32_t), 1, fptrCS);
+                break;
+
+            case BIT32_HONEYWELL_CHECKSUM:
+                fprintf(fptrHR, "%u %u %u\n", currEntry, currEntry2, checksum32doub);
+                fwrite(&currEntry, sizeof(uint32_t), 1, fptrCS);
+                fwrite(&currEntry2, sizeof(uint32_t), 1, fptrCS);
                 fwrite(&checksum32doub, sizeof(uint32_t), 1, fptrCS);
                 break;
             

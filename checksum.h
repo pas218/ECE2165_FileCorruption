@@ -70,4 +70,10 @@ uint16_t residueChecksum_16bitCW_32bDW_snglPrec (uint32_t dataword, uint32_t siz
     return (bottomHalf + topHalf + carry) & 0x0000FFFF;  
 }
 
+uint32_t HWChecksum_32bitCW_32bDW (uint32_t dataword1_2, uint32_t dataword3_4)
+{
+    // innately double precision
+    return dataword1_2 + dataword3_4;
+}
+
 #endif
