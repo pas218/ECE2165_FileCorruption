@@ -61,11 +61,11 @@ uint32_t checksum_16bitCW_32bDW_doubPrec (uint32_t dataword, uint32_t sizeChecks
 
 uint16_t residueChecksum_16bitCW_32bDW_snglPrec (uint32_t dataword, uint32_t sizeChecksum)
 {
-    uint8_t bottomHalf = dataword & 0x0000FFFF;
-    uint8_t topHalf = (dataword & 0xFFFF0000) >> sizeChecksum;   // Make sure both halves align with each other;
+    uint32_t bottomHalf = dataword & 0x0000FFFF;
+    uint32_t topHalf = (dataword & 0xFFFF0000) >> sizeChecksum;   // Make sure both halves align with each other;
 
-    uint8_t carryIso = (bottomHalf + topHalf) & 0xFFFF0000;
-    uint8_t carry = carryIso >> sizeChecksum;
+    uint32_t carryIso = (bottomHalf + topHalf) & 0xFFFF0000;
+    uint32_t carry = carryIso >> sizeChecksum;
 
     return (bottomHalf + topHalf + carry) & 0x0000FFFF;  
 }
