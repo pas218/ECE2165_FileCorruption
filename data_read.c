@@ -57,10 +57,11 @@ int main(int argc, char **argv)
     uint8_t HCSECDED = 0;
     uint16_t ResidArithVals[3];
     bool residCodeCheck = false;
-
+    
     uint32_t dwCW32[2];
     uint32_t checksum32;
     uint64_t HC64 = 0;
+    uint64_t ResidArithVals64[3];
 
     bool breakCond = false;
     int numErrorDetected = 0;
@@ -132,7 +133,7 @@ int main(int argc, char **argv)
                 if(fread(&ResidArithVals, sizeof(uint16_t), 3, fptrCorrCS) == 3)
                 {
                     gettimeofday(&tval_before, NULL);
-                    residCodeCheck = lcresidarith_extract_compare(ResidArithVals[0], ResidArithVals[1], ResidArithVals[2], 3);
+                    residCodeCheck = lcresidarith_extract_compare_8b(ResidArithVals[0], ResidArithVals[1], ResidArithVals[2], 3);
                     gettimeofday(&tval_after, NULL);
                 }
                 else breakCond = true;
@@ -142,7 +143,7 @@ int main(int argc, char **argv)
                 if(fread(&ResidArithVals, sizeof(uint16_t), 3, fptrCorrCS) == 3)
                 {
                     gettimeofday(&tval_before, NULL);
-                    residCodeCheck = biresidue_compare_correct(ResidArithVals[0], ResidArithVals[1], ResidArithVals[2]);
+                    residCodeCheck = biresidue_compare_correct_8b(ResidArithVals[0], ResidArithVals[1], ResidArithVals[2]);
                     gettimeofday(&tval_after, NULL);
                 }
                 else breakCond = true;
@@ -222,6 +223,16 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT32_RESID_ARITH:
+                if(fread(&ResidArithVals64, sizeof(uint64_t), 3, fptrCorrCS) == 3)
+                {
+                    gettimeofday(&tval_before, NULL);
+                    residCodeCheck = lcresidarith_extract_compare_32b(ResidArithVals64[0], ResidArithVals64[1], ResidArithVals64[2], 3);
+                    gettimeofday(&tval_after, NULL);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -284,6 +295,7 @@ int main(int argc, char **argv)
                 break;
 
             case BIT8_RESID_ARITH:
+            case BIT32_RESID_ARITH:
                 if(!residCodeCheck) numErrorDetected++;
                 break;
             

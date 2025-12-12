@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     uint16_t CRC;
     uint16_t HCcodeword = 0;
     uint16_t residArith[3];
-
+    
     uint32_t currEntry;
     uint32_t currEntry2;
     uint16_t checksum32;
@@ -52,6 +52,7 @@ int main(int argc, char **argv)
     uint32_t checksum32size = 16;
     uint64_t CRC64;
     uint64_t HCcodeword64 = 0;
+    uint64_t residArith64[3];
 
     // float get_elapsed_ms(struct timespec start, struct timespec end) {
     // Variables for keeping track of time.
@@ -174,6 +175,16 @@ int main(int argc, char **argv)
                 gettimeofday(&tval_after, NULL);
                 break;
 
+            case BIT32_RESID_ARITH:
+                currEntry = rand32();
+                currEntry2 = rand32();
+                gettimeofday(&tval_before, NULL);
+                residArith64[0] = lowcost_residuearith_32bDW(currEntry, 3);
+                residArith64[1] = lowcost_residuearith_32bDW(currEntry2, 3);
+                residArith64[2] = ((uint64_t)currEntry + currEntry2);
+                gettimeofday(&tval_after, NULL);
+                break;
+
                 
             default:
                 break;
@@ -252,6 +263,12 @@ int main(int argc, char **argv)
                 fprintf(fptrHR, "%lu\n", HCcodeword64);
                 fwrite(&HCcodeword64, sizeof(uint64_t), 1, fptrCS);
                 break;
+
+            case BIT32_RESID_ARITH:
+            case BIT32_BIRESID:
+                    fprintf(fptrHR, "%lu %lu %lu\n", residArith64[0], residArith64[1], residArith64[2]);
+                    fwrite(&residArith64, sizeof(uint64_t), 3, fptrCS);
+                    break;
             
             default:
                 break;

@@ -81,6 +81,7 @@ int main(int argc, char **argv)
     uint8_t dataOrCS;
     uint8_t errorIdx;
     uint64_t CW64;
+    uint64_t ResidArithVals64[3];
 
     // Corrupt the human readable and binary file.
     while (fgets(line, sizeof(line), fptrHR) != NULL)
@@ -187,6 +188,14 @@ int main(int argc, char **argv)
                 CW64 ^= bitmask_16b_to_32b(mask);
                 fprintf(fptrCorrHR, "%lu\n", CW64);
                 fwrite(&CW64, sizeof(uint64_t), 1, fptrCorrCS);
+                break;
+
+            case BIT32_RESID_ARITH:
+            case BIT32_BIRESID:
+                human_readable_tokenizer_64b(ResidArithVals64, line);
+                ResidArithVals64[2] ^= bitmask_16b_to_32b(mask);
+                fprintf(fptrCorrHR, "%lu %lu %lu\n", ResidArithVals64[0], ResidArithVals64[1], ResidArithVals64[2]);
+                fwrite(&ResidArithVals64, sizeof(uint64_t), 3, fptrCorrCS);
                 break;
                 
 

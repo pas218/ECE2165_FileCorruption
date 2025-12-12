@@ -213,6 +213,19 @@ void human_readable_tokenizer_32b(uint32_t nums[], char line[])
     nums[2] = strtoul(token, NULL, 10);
 }
 
+void human_readable_tokenizer_64b(uint64_t nums[], char line[])
+{
+    const char delim[] = " ";
+    char* token;
+
+    token = strtok(line, delim);
+    nums[0] = strtoull(token, NULL, 10);
+    token = strtok(NULL, delim);
+    nums[1] = strtoull(token, NULL, 10);
+    token = strtok(NULL, delim);
+    nums[2] = strtoull(token, NULL, 10);
+}
+
 void get_buffer_after_space(const char in_buffer[], char out_buffer[], const int size)
 {
     uint8_t start_copy = 0;

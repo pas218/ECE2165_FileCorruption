@@ -2,7 +2,7 @@
 #define RESIDUECODES_H
 #include <stdint.h>
 
-uint8_t lcresidarith_resalgo(uint16_t input, uint8_t a_modexp)
+uint8_t lcresidarith_resalgo_16b(uint16_t input, uint8_t a_modexp)
 {
     uint8_t mask = (1<<a_modexp) - 1;
     uint8_t sum = 0;
@@ -15,21 +15,34 @@ uint8_t lcresidarith_resalgo(uint16_t input, uint8_t a_modexp)
     return sum % mask;
 }
 
+uint8_t lcresidarith_resalgo_64b(uint64_t input, uint8_t a_modexp)
+{
+    uint16_t mask = (1<<a_modexp) - 1;
+    uint16_t sum = 0;
+
+    for(int i = 0; i < 64; i+=a_modexp)
+    {
+        sum += (input>>i) & mask;
+    }
+
+    return sum % mask;
+}
+
 uint16_t lowcost_residuearith_8bDW(uint8_t input, uint8_t a_modexp)
 {
     uint16_t output = input;
 
     output <<= a_modexp;
-    output |= lcresidarith_resalgo(input, a_modexp);
+    output |= lcresidarith_resalgo_16b(input, a_modexp);
     return output;
 }
 
-bool lcresidarith_extract_compare(uint16_t input1, uint16_t input2, uint16_t output, uint8_t a_modexp)
+bool lcresidarith_extract_compare_8b(uint16_t input1, uint16_t input2, uint16_t output, uint8_t a_modexp)
 {
     uint8_t mask = (1<<a_modexp) - 1;
     uint8_t input1res = input1 & mask;
     uint8_t input2res = input2 & mask;
-    uint8_t outputres = lcresidarith_resalgo(output, a_modexp);
+    uint8_t outputres = lcresidarith_resalgo_16b(output, a_modexp);
 
     bool matchRes = ((input1res + input2res) % mask) == outputres;
 
@@ -72,7 +85,7 @@ uint16_t biresidue_correction_8bDW_12bCW(uint8_t input)
     return output;
 }
 
-bool biresidue_compare_correct(uint16_t input1, uint16_t input2, uint16_t output)
+bool biresidue_compare_correct_8b(uint16_t input1, uint16_t input2, uint16_t output)
 {
     int16_t biresidue_lut[15][7] = 
     {
@@ -108,8 +121,8 @@ bool biresidue_compare_correct(uint16_t input1, uint16_t input2, uint16_t output
     uint8_t input1resa = input1 & Amask;
     uint8_t input2resa = input2 & Amask;
 
-    uint8_t outputresa = lcresidarith_resalgo(output, 3);
-    uint8_t outputresb = lcresidarith_resalgo(output, 4);
+    uint8_t outputresa = lcresidarith_resalgo_16b(output, 3);
+    uint8_t outputresb = lcresidarith_resalgo_16b(output, 4);
 
     uint8_t syndromeA = outputresa - ((input1resa + input2resa) % Amask);
     if(syndromeA > Amask) syndromeA += Amask;
@@ -124,6 +137,30 @@ bool biresidue_compare_correct(uint16_t input1, uint16_t input2, uint16_t output
     // printf("output: %d, lutMod: %d, syndA: %d, syndB: %d\n", output, lutModifier, syndromeA, syndromeB);
 
     return lutModifier != 0;
+
+}
+
+uint64_t lowcost_residuearith_32bDW(uint32_t input, uint8_t a_modexp)
+{
+    uint64_t output = input;
+
+    output <<= a_modexp;
+    output |= lcresidarith_resalgo_64b(input, a_modexp);
+    return output;
+}
+
+bool lcresidarith_extract_compare_32b(uint64_t input1, uint64_t input2, uint64_t output, uint8_t a_modexp)
+{
+    uint16_t mask = (1<<a_modexp) - 1;
+    uint16_t input1res = input1 & mask;
+    uint16_t input2res = input2 & mask;
+    uint16_t outputres = lcresidarith_resalgo_64b(output, a_modexp);
+
+    bool matchRes = ((input1res + input2res) % mask) == outputres;
+
+    // printf("output: %lu, res1: %lu, res2: %lu, outRes: %lu, matchRes: %d\n", output, input1res, input2res, outputres, matchRes);
+
+    return matchRes;
 
 }
 
