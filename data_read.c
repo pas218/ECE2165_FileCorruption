@@ -233,6 +233,16 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT32_BIRESID:
+                if(fread(&ResidArithVals64, sizeof(uint64_t), 3, fptrCorrCS) == 3)
+                {
+                    gettimeofday(&tval_before, NULL);
+                    residCodeCheck = biresidue_compare_correct_32b(ResidArithVals64[0], ResidArithVals64[1], ResidArithVals64[2]);
+                    gettimeofday(&tval_after, NULL);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -300,6 +310,7 @@ int main(int argc, char **argv)
                 break;
             
             case BIT8_BIRESID:
+            case BIT32_BIRESID:
                 if(residCodeCheck)
                 {
                     numErrorDetected++;

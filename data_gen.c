@@ -185,6 +185,16 @@ int main(int argc, char **argv)
                 gettimeofday(&tval_after, NULL);
                 break;
 
+            case BIT32_BIRESID:
+                currEntry = rand32();
+                currEntry2 = rand32();
+                gettimeofday(&tval_before, NULL);
+                residArith64[0] = biresidue_correction_32bDW_45bCW(currEntry);
+                residArith64[1] = biresidue_correction_32bDW_45bCW(currEntry2);
+                residArith64[2] = ((uint64_t)currEntry + currEntry2);
+                gettimeofday(&tval_after, NULL);
+                break;
+
                 
             default:
                 break;
