@@ -167,6 +167,13 @@ int main(int argc, char **argv)
                 gettimeofday(&tval_after, NULL);
                 break;
 
+            case BIT32_HC_SECDED:
+                currEntry = rand32();
+                gettimeofday(&tval_before, NULL);
+                HCcodeword64 = HC_39bCW_32bDW(currEntry);
+                gettimeofday(&tval_after, NULL);
+                break;
+
                 
             default:
                 break;
@@ -241,6 +248,7 @@ int main(int argc, char **argv)
                 break;
 
             case BIT32_HC_SEC:
+            case BIT32_HC_SECDED:
                 fprintf(fptrHR, "%lu\n", HCcodeword64);
                 fwrite(&HCcodeword64, sizeof(uint64_t), 1, fptrCS);
                 break;

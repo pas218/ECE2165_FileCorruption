@@ -212,6 +212,16 @@ int main(int argc, char **argv)
                 else breakCond = true;
                 break;
 
+            case BIT32_HC_SECDED:
+                if(fread(&HC64, sizeof(uint64_t), 1, fptrCorrCS) == 1)
+                {
+                    gettimeofday(&tval_before, NULL);
+                    HCSECDED = HC_39bCW_32bDW_syndrome_SECDED(&HC64, &HCSyndrome);
+                    gettimeofday(&tval_after, NULL);
+                }
+                else breakCond = true;
+                break;
+
             default:
                 breakCond = true;
                 break;
@@ -258,6 +268,7 @@ int main(int argc, char **argv)
                 break;
 
             case BIT8_HC_SECDED:
+            case BIT32_HC_SECDED:
                 if(HCSECDED || HCSyndrome)
                 {
                     if(HCSECDED)

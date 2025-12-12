@@ -185,7 +185,7 @@ bool HC_38bCW_32bDW_syndrome_SEC (uint64_t* codeword)
     return syndrome;
 }
 
-uint16_t HC_39bCW_32bDW (uint32_t dataword)
+uint64_t HC_39bCW_32bDW (uint32_t dataword)
 {
     uint32_t P[6] = {
         0b10011100111001010011001001010101, 
@@ -195,7 +195,7 @@ uint16_t HC_39bCW_32bDW (uint32_t dataword)
         0b10101110001100101001011011011011,
         0b01110111100100111010101110100001
     };
-    uint64_t codeword = (uint64_t)dataword << 4;
+    uint64_t codeword = (uint64_t)dataword << 6;
     // printf("%hu --> ", codeword);
 
     for(int i = 0; i < 6; i++)
@@ -205,12 +205,66 @@ uint16_t HC_39bCW_32bDW (uint32_t dataword)
         codeword |= (rowPar<<(5-i));
     }
 
-    uint8_t totalPar = get_parity(codeword, 36);
+    uint8_t totalPar = get_parity(codeword, 38);
     codeword <<= 1;
     codeword |= totalPar;
 
     // printf("%hu\n", codeword);
     return codeword;
+}
+
+uint8_t HC_39bCW_32bDW_syndrome_SECDED (uint64_t* codeword, uint8_t* crcSynd)
+{
+    uint64_t H[6] = {
+        0b10011100111001010011001001010101100000, 
+        0b00111011011010010100100111000011010000, 
+        0b11001010110010100010101011101101001000, 
+        0b01001101100101010100111010011100000100,
+        0b10101110001100101001011011011011000010,
+        0b01110111100100111010101110100001000001
+    };
+
+    uint8_t syndromeLookup[64] = 
+    {
+          0,   1,   2,  22,   3, 255,  17,  27,   4,  12, 255,  24, 255,  37,  10, 255,
+          5,  15,   8,  36,  21,  31, 255, 255,  26, 255, 255,  32, 255,  18, 255,  14,
+          6, 255,  19, 255,  25, 255,  11,  33, 255,  20,  38, 255,   9,  30, 255,  16,
+        255,  35,  28, 255, 255,  23, 255, 255,  29, 255,  13,   7, 255, 255,  34, 255
+    };
+    uint8_t syndrome = 0;
+    uint8_t secorded = get_parity(*codeword, 39);
+    // printf("err codeword: %d, parity: %d\n", *codeword, secorded);
+    uint64_t codewordNoTotalPar = *codeword >> 1;
+
+    for(int i = 0; i < 6; i++)
+    {
+        uint64_t xorMalMult = H[i] & codewordNoTotalPar;
+        uint8_t rowPar = get_parity(xorMalMult, 38);
+        syndrome |= (rowPar<<(5-i));
+    }
+
+    if(secorded)
+    {
+        uint8_t wrongBit = syndromeLookup[syndrome];
+        if(wrongBit == 255)
+        {
+            // printf("ERROR WITH HC - %d, syndrome was %d\n", *codeword, syndrome);
+        }
+        else
+        {
+            (*codeword) ^= 0x1<<wrongBit;
+            // printf("fixed codeword: %d\n", *codeword);
+        }
+    }
+    else
+    {
+        // printf("Double error detected, syndrome: %d, secded status: %d\n", syndrome, secorded);
+    }
+
+    *crcSynd = syndrome;
+
+
+    return secorded;
 }
 
 // uint8_t syndromeLookup[64] = 
